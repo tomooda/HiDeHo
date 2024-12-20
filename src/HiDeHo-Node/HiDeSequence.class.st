@@ -4,9 +4,16 @@ Class {
 	#instVars : [
 		'collection'
 	],
-	#category : 'HiDeHo-Node',
-	#package : 'HiDeHo-Node'
+	#category : 'HiDeHo-Node-Core',
+	#package : 'HiDeHo-Node',
+	#tag : 'Core'
 }
+
+{ #category : 'instance creation' }
+HiDeSequence class >> new: anInteger [
+
+	^ self basicNew initialize: anInteger
+]
 
 { #category : 'adding/removing' }
 HiDeSequence >> add: aHiDeNode [
@@ -14,16 +21,10 @@ HiDeSequence >> add: aHiDeNode [
 	^ collection add: aHiDeNode
 ]
 
-{ #category : 'enumerating' }
-HiDeSequence >> allSatisfy: aBlock [
+{ #category : 'adding/removing' }
+HiDeSequence >> addAll: aCollectionOfHiDeNode [
 
-	^ collection allSatisfy: [ :node | node allSatisfy: aBlock ]
-]
-
-{ #category : 'enumerating' }
-HiDeSequence >> anySatisfy: aBlock [
-
-	^ collection anySatisfy: [ :node | node anySatisfy: aBlock ]
+	^ collection addAll: aCollectionOfHiDeNode
 ]
 
 { #category : 'enumerating' }
@@ -32,20 +33,24 @@ HiDeSequence >> do: aBlock [
 	collection do: aBlock
 ]
 
-{ #category : 'accessing' }
-HiDeSequence >> impacts [
-
-	| impacts |
-	impacts := Set new.
-	self do: [ :node | impacts addAll: node impacts ].
-	^ impacts
-]
-
 { #category : 'initialization' }
 HiDeSequence >> initialize [
 
 	super initialize.
 	collection := OrderedCollection new
+]
+
+{ #category : 'initialization' }
+HiDeSequence >> initialize: anInteger [
+
+	super initialize.
+	collection := OrderedCollection new: anInteger
+]
+
+{ #category : 'enumerating' }
+HiDeSequence >> operationsDo: aBlock [
+
+	collection do: [ :node | node operationsDo: aBlock ]
 ]
 
 { #category : 'adding/removing' }

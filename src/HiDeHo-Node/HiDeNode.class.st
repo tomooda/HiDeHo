@@ -1,8 +1,9 @@
 Class {
 	#name : 'HiDeNode',
 	#superclass : 'Object',
-	#category : 'HiDeHo-Node',
-	#package : 'HiDeHo-Node'
+	#category : 'HiDeHo-Node-Core',
+	#package : 'HiDeHo-Node',
+	#tag : 'Core'
 }
 
 { #category : 'testing' }
@@ -12,15 +13,32 @@ HiDeNode class >> isAbstract [
 ]
 
 { #category : 'enumerating' }
+HiDeNode >> allOperationsSatisfy: aBlock [
+
+	self operationsDo: [ :node |
+		(aBlock value: node) ifFalse: [ ^ false ] ].
+	^ true
+]
+
+{ #category : 'enumerating' }
 HiDeNode >> allSatisfy: aBlock [
 
-	^ self subclassResponsibility
+	self do: [ :node | (aBlock value: node) ifFalse: [ ^ false ] ].
+	^ true
+]
+
+{ #category : 'enumerating' }
+HiDeNode >> anyOperationSatisfy: aBlock [
+
+	self operationsDo: [ :node | (aBlock value: node) ifTrue: [ ^ true ] ].
+	^ false
 ]
 
 { #category : 'enumerating' }
 HiDeNode >> anySatisfy: aBlock [
 
-	^ self subclassResponsibility
+	self do: [ :node | (aBlock value: node) ifTrue: [ ^ true ] ].
+	^ false
 ]
 
 { #category : 'enumerating' }
@@ -30,7 +48,16 @@ HiDeNode >> do: aBlock [
 ]
 
 { #category : 'accessing' }
-HiDeNode >> impacts [
+HiDeNode >> numberOfOperations [
+
+	| num |
+	num := 0.
+	self operationsDo: [ :operation | num := num + 1 ].
+	^ num
+]
+
+{ #category : 'enumerating' }
+HiDeNode >> operationsDo: aBlock [
 
 	^ self subclassResponsibility
 ]

@@ -15,6 +15,14 @@ HiDeSequence class >> new: anInteger [
 	^ self basicNew initialize: anInteger
 ]
 
+{ #category : 'instance creation' }
+HiDeSequence class >> with: aHiDeNode [
+
+	^ self new
+		  add: aHiDeNode;
+		  yourself
+]
+
 { #category : 'adding/removing' }
 HiDeSequence >> add: aHiDeNode [
 
@@ -24,7 +32,14 @@ HiDeSequence >> add: aHiDeNode [
 { #category : 'adding/removing' }
 HiDeSequence >> addAll: aCollectionOfHiDeNode [
 
-	^ collection addAll: aCollectionOfHiDeNode
+	aCollectionOfHiDeNode do: [ :node | collection addLast: node ].
+	^ aCollectionOfHiDeNode
+]
+
+{ #category : 'accessing' }
+HiDeSequence >> at: anInteger [
+
+	^ collection at: anInteger
 ]
 
 { #category : 'enumerating' }
@@ -47,6 +62,18 @@ HiDeSequence >> initialize: anInteger [
 	collection := OrderedCollection new: anInteger
 ]
 
+{ #category : 'testing' }
+HiDeSequence >> isSequence [
+
+	^ true
+]
+
+{ #category : 'enumerating' }
+HiDeSequence >> operationHoldersDo: aBlock [
+
+	collection do: [ :node | node operationHoldersDo: aBlock ]
+]
+
 { #category : 'enumerating' }
 HiDeSequence >> operationsDo: aBlock [
 
@@ -57,4 +84,19 @@ HiDeSequence >> operationsDo: aBlock [
 HiDeSequence >> remove: aHiDeNode ifAbsent: errorBlock [
 
 	^ collection remove: aHiDeNode ifAbsent: errorBlock
+]
+
+{ #category : 'adding/removing' }
+HiDeSequence >> removeOperation: anObject [
+
+	collection removeAllSuchThat: [ :node |
+		node isOperationHolder and: [ node value = anObject ] ].
+	collection do: [ :node | node removeOperation: anObject ].
+	^ anObject
+]
+
+{ #category : 'accessing' }
+HiDeSequence >> size [
+
+	^ collection size
 ]

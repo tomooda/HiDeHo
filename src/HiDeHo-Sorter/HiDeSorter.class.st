@@ -2,6 +2,7 @@ Class {
 	#name : 'HiDeSorter',
 	#superclass : 'Object',
 	#instVars : [
+		'sequence',
 		'sequences',
 		'merger',
 		'exclusive',
@@ -15,25 +16,14 @@ Class {
 { #category : 'adding' }
 HiDeSorter >> add: anObject [
 
-	| newOperationHolder |
-	newOperationHolder := HiDeOperationHolder on: anObject.
-	(sequences select: [ :sequence |
-		 sequence anyOperationSatisfy: [ :operation |
-			 matcher value: operation value: anObject ] ])
-		ifNotEmpty: [ :matchedSequences |
-			(exclusive and: [ matchedSequences size > 1 ])
-				ifTrue: [ (self merge: matchedSequences) add: newOperationHolder ]
-				ifFalse: [
-					matchedSequences do: [ :sequence |
-						sequence add: newOperationHolder ] ] ]
-		ifEmpty: [
-		sequences addLast: (HiDeSequence with: newOperationHolder) ]
+	merger add: anObject to: sequence withMatcher: matcher.
+	^ anObject
 ]
 
 { #category : 'accessing' }
 HiDeSorter >> at: anInteger [
 
-	^ sequences at: anInteger
+	^ sequence at: anInteger
 ]
 
 { #category : 'matching' }
@@ -46,12 +36,6 @@ HiDeSorter >> beExclusive [
 HiDeSorter >> beNonExclusive [
 
 	exclusive := false
-]
-
-{ #category : 'private' }
-HiDeSorter >> createMerge: aCollectionOfHiDeSequence [
-
-	^ merger createMerge: aCollectionOfHiDeSequence
 ]
 
 { #category : 'matching' }
@@ -70,9 +54,8 @@ HiDeSorter >> defaultMerger [
 HiDeSorter >> initialize [
 
 	super initialize.
-	sequences := OrderedCollection new.
+	sequence := HiDeSequence new.
 	merger := self defaultMerger.
-	exclusive := true.
 	matcher := self defaultMatcher
 ]
 
@@ -95,20 +78,6 @@ HiDeSorter >> matcher: aBlock [
 ]
 
 { #category : 'merging' }
-HiDeSorter >> merge: aCollectionOfHiDeNode [
-
-	| index mergedSequence |
-	aCollectionOfHiDeNode ifEmpty: [ ^ ValueNotFound signal ].
-	index := (aCollectionOfHiDeNode collect: [ :node |
-		          sequences indexOf: node ]) min.
-	index = 0 ifTrue: [ ^ ValueNotFound signal ].
-	mergedSequence := self createMerge: aCollectionOfHiDeNode.
-	sequences removeAll: aCollectionOfHiDeNode.
-	sequences add: mergedSequence beforeIndex: index.
-	^ mergedSequence
-]
-
-{ #category : 'merging' }
 HiDeSorter >> merger [
 
 	^ merger
@@ -121,9 +90,15 @@ HiDeSorter >> merger: aHiDeMerger [
 ]
 
 { #category : 'accessing' }
+HiDeSorter >> sequence [
+
+	^ sequence
+]
+
+{ #category : 'accessing' }
 HiDeSorter >> size [
 
-	^ sequences size
+	^ sequence size
 ]
 
 { #category : 'merging' }

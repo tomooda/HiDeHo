@@ -47,6 +47,12 @@ HiDeOperationHolder >> operationHoldersDo: aBlock [
 	aBlock value: self
 ]
 
+{ #category : 'printing' }
+HiDeOperationHolder >> printOn: aStream [
+
+	operation printOn: aStream
+]
+
 { #category : 'adding/removing' }
 HiDeOperationHolder >> removeOperation: anObject [
 

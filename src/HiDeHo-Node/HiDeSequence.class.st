@@ -30,6 +30,12 @@ HiDeSequence >> add: aHiDeNode [
 ]
 
 { #category : 'adding/removing' }
+HiDeSequence >> add: aHiDeNode beforeIndex: anInteger [
+
+	^ collection add: aHiDeNode beforeIndex: anInteger
+]
+
+{ #category : 'adding/removing' }
 HiDeSequence >> addAll: aCollectionOfHiDeNode [
 
 	aCollectionOfHiDeNode do: [ :node | collection addLast: node ].
@@ -46,6 +52,21 @@ HiDeSequence >> at: anInteger [
 HiDeSequence >> do: aBlock [
 
 	collection do: aBlock
+]
+
+{ #category : 'enumerating' }
+HiDeSequence >> do: aBlock separatedBy: anotherBlock [
+
+	1 to: self size - 1 do: [ :index |
+		aBlock value: (self at: index).
+		anotherBlock value ].
+	aBlock value: (self at: self size)
+]
+
+{ #category : 'accessing' }
+HiDeSequence >> indexOf: aHiDeNode [
+
+	^ collection indexOf: aHiDeNode
 ]
 
 { #category : 'initialization' }
@@ -80,10 +101,27 @@ HiDeSequence >> operationsDo: aBlock [
 	collection do: [ :node | node operationsDo: aBlock ]
 ]
 
+{ #category : 'printing' }
+HiDeSequence >> printOn: aStream [
+
+	aStream nextPut: $(.
+	self
+		do: [ :node | node printOn: aStream ]
+		separatedBy: [ aStream space ].
+	aStream nextPut: $)
+]
+
 { #category : 'adding/removing' }
 HiDeSequence >> remove: aHiDeNode ifAbsent: errorBlock [
 
 	^ collection remove: aHiDeNode ifAbsent: errorBlock
+]
+
+{ #category : 'adding/removing' }
+HiDeSequence >> removeAll: aCollectionOfHiDeNode [
+
+	collection removeAll: aCollectionOfHiDeNode.
+	^ aCollectionOfHiDeNode
 ]
 
 { #category : 'adding/removing' }

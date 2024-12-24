@@ -92,3 +92,11 @@ HiDeNode >> removeOperation: aHiDeAbstractOperation [
 
 	^ self subclassResponsibility
 ]
+
+{ #category : 'enumerating' }
+HiDeNode >> select: aBlock [
+
+	^ Array streamContents: [ :stream |
+		  self do: [ :node |
+			  (aBlock value: node) ifTrue: [ stream nextPut: node ] ] ]
+]

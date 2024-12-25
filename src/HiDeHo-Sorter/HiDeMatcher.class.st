@@ -10,3 +10,9 @@ HiDeMatcher class >> isAbstract [
 
 	^ self == HiDeMatcher
 ]
+
+{ #category : 'evaluating' }
+HiDeMatcher >> value: anObject value: anotherObject [
+
+	^ self subclassResponsibility
+]

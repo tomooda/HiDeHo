@@ -17,6 +17,18 @@ HiDeOperationHolder class >> on: anObject [
 		  yourself
 ]
 
+{ #category : 'converting' }
+HiDeOperationHolder >> asHiDeOperationHolder [
+
+	^ self
+]
+
+{ #category : 'converting' }
+HiDeOperationHolder >> asHiDeSequence [
+
+	^ HiDeSequence with: self
+]
+
 { #category : 'enumerating' }
 HiDeOperationHolder >> do: aBlock [
 

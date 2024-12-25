@@ -16,30 +16,80 @@ HiDeSequence class >> new: anInteger [
 ]
 
 { #category : 'instance creation' }
-HiDeSequence class >> with: aHiDeNode [
+HiDeSequence class >> with: anObject [
 
 	^ self new
-		  add: aHiDeNode;
+		  add: anObject;
+		  yourself
+]
+
+{ #category : 'instance creation' }
+HiDeSequence class >> with: anObject with: anotherObject [
+
+	^ self new
+		  add: anObject;
+		  add: anotherObject;
+		  yourself
+]
+
+{ #category : 'instance creation' }
+HiDeSequence class >> with: anObject1 with: anObject2 with: anObject3 [
+
+	^ self new
+		  add: anObject1;
+		  add: anObject2;
+		  add: anObject3;
+		  yourself
+]
+
+{ #category : 'instance creation' }
+HiDeSequence class >> with: anObject1 with: anObject2 with: anObject3 with: anObject4 [
+
+	^ self new
+		  add: anObject1;
+		  add: anObject2;
+		  add: anObject3;
+		  add: anObject4;
+		  yourself
+]
+
+{ #category : 'instance creation' }
+HiDeSequence class >> withAll: aCollection [
+
+	^ self new
+		  addAll: aCollection;
 		  yourself
 ]
 
 { #category : 'adding/removing' }
-HiDeSequence >> add: aHiDeNode [
+HiDeSequence >> add: anObject [
 
-	^ collection add: aHiDeNode
+	^ collection add: anObject asHiDeNode
 ]
 
 { #category : 'adding/removing' }
-HiDeSequence >> add: aHiDeNode beforeIndex: anInteger [
+HiDeSequence >> add: anObject beforeIndex: anInteger [
 
-	^ collection add: aHiDeNode beforeIndex: anInteger
+	^ collection add: anObject asHiDeNode beforeIndex: anInteger
 ]
 
 { #category : 'adding/removing' }
-HiDeSequence >> addAll: aCollectionOfHiDeNode [
+HiDeSequence >> addAll: aCollection [
 
-	aCollectionOfHiDeNode do: [ :node | collection addLast: node ].
-	^ aCollectionOfHiDeNode
+	aCollection do: [ :object | collection addLast: object asHiDeNode ].
+	^ aCollection
+]
+
+{ #category : 'converting' }
+HiDeSequence >> asHiDeOperationHolder [
+
+	^ self error: 'Operation holders should not be nested.'
+]
+
+{ #category : 'converting' }
+HiDeSequence >> asHiDeSequence [
+
+	^ self
 ]
 
 { #category : 'accessing' }

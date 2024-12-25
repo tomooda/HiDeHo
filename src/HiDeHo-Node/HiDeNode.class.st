@@ -41,6 +41,12 @@ HiDeNode >> anySatisfy: aBlock [
 	^ false
 ]
 
+{ #category : 'converting' }
+HiDeNode >> asHiDeNode [
+
+	^ self
+]
+
 { #category : 'enumerating' }
 HiDeNode >> do: aBlock [
 

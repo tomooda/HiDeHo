@@ -13,7 +13,7 @@ HiDeSorterTest >> testFlatCluster [
 	sorter := HiDeSorter new.
 	sorter
 		useFlatMerger;
-		matcher: [ :i1 :i2 | (i1 - i2) abs <= 1 ].
+		matcher: [ :i1 :i2 | (i1 - i2) abs <= 1 ] asHiDeMatcher.
 	sorter
 		add: 0;
 		add: 1;
@@ -39,7 +39,7 @@ HiDeSorterTest >> testHierarchicalCluster [
 	sorter := HiDeSorter new.
 	sorter
 		useHierarchicalMerger;
-		matcher: [ :i1 :i2 | (i1 - i2) abs <= 1 ].
+		matcher: [ :i1 :i2 | (i1 - i2) abs <= 1 ] asHiDeMatcher.
 	sorter
 		add: 0;
 		add: 1;

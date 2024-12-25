@@ -15,16 +15,14 @@ Class {
 { #category : 'running' }
 HiDeSequenceTest >> setUp [
 
-	seq := HiDeSequence new.
-	subseq := HiDeSequence new.
-	op1 := HiDeOperationHolder on: 1.
-	op2 := HiDeOperationHolder on: 2.
-	seq
-		add: op1;
-		add: subseq.
-	subseq
-		add: op1;
-		add: op2
+	op1 := 1 asHiDeOperationHolder.
+	op2 := 2 asHiDeOperationHolder.
+	subseq := {
+		          op1.
+		          op2 } asHiDeSequence.
+	seq := {
+		       op1.
+		       subseq } asHiDeSequence
 ]
 
 { #category : 'tests' }

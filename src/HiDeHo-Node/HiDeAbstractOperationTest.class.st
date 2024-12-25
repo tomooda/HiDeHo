@@ -12,7 +12,7 @@ Class {
 { #category : 'running' }
 HiDeAbstractOperationTest >> setUp [
 
-	op := HiDeOperationHolder on: 1
+	op := 1 asHiDeOperationHolder
 ]
 
 { #category : 'tests' }

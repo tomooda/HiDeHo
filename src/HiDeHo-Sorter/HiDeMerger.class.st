@@ -7,28 +7,28 @@ Class {
 }
 
 { #category : 'adding' }
-HiDeMerger >> add: anObject to: aHiDeSequence withMatcher: aHiDeMatcher [
+HiDeMerger >> add: anObject to: aHiDeClosure withMatcher: aHiDeMatcher [
 
-	(aHiDeSequence select: [ :sequence |
-		 sequence anyOperationSatisfy: [ :operation |
-			 aHiDeMatcher value: operation value: anObject ] ])
+	(aHiDeClosure selectNodes: [ :closure |
+		 closure anySatisfy: [ :object |
+			 aHiDeMatcher value: object value: anObject ] ])
 		ifNotEmpty: [ :matchedNodes |
-			(matchedNodes size = 1 and: [ matchedNodes first isSequence ])
-				ifTrue: [ matchedNodes first add: anObject asHiDeOperationHolder ]
+			(matchedNodes size = 1 and: [ matchedNodes first isHiDeClosure ])
+				ifTrue: [ matchedNodes first add: anObject asHiDeItem ]
 				ifFalse: [
-					| index mergedSequence |
+					| index mergedClosure |
 					matchedNodes ifEmpty: [ ^ ValueNotFound signal ].
 					index := (matchedNodes collect: [ :node |
-						          aHiDeSequence indexOf: node ]) min.
-					mergedSequence := self createMerge: matchedNodes.
-					aHiDeSequence removeAll: matchedNodes.
-					aHiDeSequence add: mergedSequence beforeIndex: index.
-					mergedSequence add: anObject asHiDeOperationHolder ] ]
-		ifEmpty: [ aHiDeSequence add: anObject asHiDeOperationHolder ]
+						          aHiDeClosure indexOfNode: node ]) min.
+					mergedClosure := self createMerge: matchedNodes.
+					aHiDeClosure removeAllNodes: matchedNodes.
+					aHiDeClosure add: mergedClosure beforeIndex: index.
+					mergedClosure add: anObject asHiDeItem ] ]
+		ifEmpty: [ aHiDeClosure add: anObject asHiDeItem ]
 ]
 
 { #category : 'merging' }
-HiDeMerger >> createMerge: aCollectionOfHiDeSequence [
+HiDeMerger >> createMerge: aCollectionOfHiDeClosure [
 
 	^ self subclassResponsibility
 ]

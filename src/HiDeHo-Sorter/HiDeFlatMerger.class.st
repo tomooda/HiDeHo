@@ -7,14 +7,14 @@ Class {
 }
 
 { #category : 'merging' }
-HiDeFlatMerger >> createMerge: aCollectionOfHiDeSequence [
+HiDeFlatMerger >> createMerge: aCollectionOfHiDeClosure [
 
-	| newSequence |
-	newSequence := HiDeSequence new: (aCollectionOfHiDeSequence
-			                inject: 0
-			                into: [ :subtotal :sequence |
-			                subtotal + sequence numberOfOperations ]).
-	aCollectionOfHiDeSequence do: [ :sequence |
-		sequence operationHoldersDo: [ :holder | newSequence add: holder ] ].
-	^ newSequence
+	| newClosure |
+	newClosure := HiDeClosure new: (aCollectionOfHiDeClosure
+			               inject: 0
+			               into: [ :subtotal :closure |
+			               subtotal + closure size ]).
+	aCollectionOfHiDeClosure do: [ :sequence |
+		sequence itemsDo: [ :holder | newClosure add: holder ] ].
+	^ newClosure
 ]

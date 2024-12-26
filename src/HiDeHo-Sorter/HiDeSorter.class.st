@@ -2,11 +2,9 @@ Class {
 	#name : 'HiDeSorter',
 	#superclass : 'Object',
 	#instVars : [
-		'sequence',
-		'sequences',
 		'merger',
-		'exclusive',
-		'matcher'
+		'matcher',
+		'closure'
 	],
 	#category : 'HiDeHo-Sorter-Core',
 	#package : 'HiDeHo-Sorter',
@@ -16,32 +14,20 @@ Class {
 { #category : 'adding' }
 HiDeSorter >> add: anObject [
 
-	merger add: anObject to: sequence withMatcher: matcher.
+	merger add: anObject to: closure withMatcher: matcher.
 	^ anObject
 ]
 
 { #category : 'accessing' }
-HiDeSorter >> at: anInteger [
+HiDeSorter >> closure [
 
-	^ sequence at: anInteger
-]
-
-{ #category : 'matching' }
-HiDeSorter >> beExclusive [
-
-	exclusive := true
-]
-
-{ #category : 'matching' }
-HiDeSorter >> beNonExclusive [
-
-	exclusive := false
+	^ closure
 ]
 
 { #category : 'matching' }
 HiDeSorter >> defaultMatcher [
 
-	^ [ :sequence :operation | false ]
+	^ [ :closure :object | false ]
 ]
 
 { #category : 'merging' }
@@ -54,15 +40,9 @@ HiDeSorter >> defaultMerger [
 HiDeSorter >> initialize [
 
 	super initialize.
-	sequence := HiDeSequence new.
+	closure := HiDeClosure new.
 	merger := self defaultMerger.
 	matcher := self defaultMatcher
-]
-
-{ #category : 'matching' }
-HiDeSorter >> isExclusive [
-
-	^ exclusive
 ]
 
 { #category : 'matching' }
@@ -90,15 +70,21 @@ HiDeSorter >> merger: aHiDeMerger [
 ]
 
 { #category : 'accessing' }
-HiDeSorter >> sequence [
+HiDeSorter >> nodeAt: anInteger [
 
-	^ sequence
+	^ closure nodeAt: anInteger
+]
+
+{ #category : 'accessing' }
+HiDeSorter >> numberOfNodes [
+
+	^ closure numberOfNodes
 ]
 
 { #category : 'accessing' }
 HiDeSorter >> size [
 
-	^ sequence size
+	^ closure size
 ]
 
 { #category : 'merging' }

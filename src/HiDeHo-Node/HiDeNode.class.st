@@ -13,31 +13,31 @@ HiDeNode class >> isAbstract [
 ]
 
 { #category : 'enumerating' }
-HiDeNode >> allOperationsSatisfy: aBlock [
+HiDeNode >> allNodesSatisfy: aBlock [
 
-	self operationsDo: [ :node |
-		(aBlock value: node) ifFalse: [ ^ false ] ].
+	self nodesDo: [ :node | (aBlock value: node) ifFalse: [ ^ false ] ].
 	^ true
 ]
 
 { #category : 'enumerating' }
 HiDeNode >> allSatisfy: aBlock [
 
-	self do: [ :node | (aBlock value: node) ifFalse: [ ^ false ] ].
+	self do: [ :object |
+		(aBlock value: object) ifFalse: [ ^ false ] ].
 	^ true
 ]
 
 { #category : 'enumerating' }
-HiDeNode >> anyOperationSatisfy: aBlock [
+HiDeNode >> anyNodeSatisfy: aBlock [
 
-	self operationsDo: [ :node | (aBlock value: node) ifTrue: [ ^ true ] ].
+	self nodesDo: [ :node | (aBlock value: node) ifTrue: [ ^ true ] ].
 	^ false
 ]
 
 { #category : 'enumerating' }
 HiDeNode >> anySatisfy: aBlock [
 
-	self do: [ :node | (aBlock value: node) ifTrue: [ ^ true ] ].
+	self do: [ :object | (aBlock value: object) ifTrue: [ ^ true ] ].
 	^ false
 ]
 
@@ -50,51 +50,50 @@ HiDeNode >> asHiDeNode [
 { #category : 'enumerating' }
 HiDeNode >> do: aBlock [
 
+	self itemsDo: [ :holder | aBlock value: holder value ]
+]
+
+{ #category : 'testing' }
+HiDeNode >> includes: anObject [
+
+	^ self anySatisfy: [ :object | object = anObject ]
+]
+
+{ #category : 'testing' }
+HiDeNode >> isHiDeClosure [
+
+	^ false
+]
+
+{ #category : 'testing' }
+HiDeNode >> isHiDeItem [
+
+	^ false
+]
+
+{ #category : 'enumerating' }
+HiDeNode >> itemsDo: aBlock [
+
 	^ self subclassResponsibility
 ]
 
-{ #category : 'testing' }
-HiDeNode >> includesOperation: anObject [
+{ #category : 'enumerating' }
+HiDeNode >> nodesDo: aBlock [
 
-	^ self anyOperationSatisfy: [ :operation |
-		  operation value = anObject ]
-]
-
-{ #category : 'testing' }
-HiDeNode >> isOperationHolder [
-
-	^ false
-]
-
-{ #category : 'testing' }
-HiDeNode >> isSequence [
-
-	^ false
+	^ self subclassResponsibility
 ]
 
 { #category : 'accessing' }
-HiDeNode >> numberOfOperations [
+HiDeNode >> numberOfNodes [
 
 	| num |
 	num := 0.
-	self operationsDo: [ :operation | num := num + 1 ].
+	self nodesDo: [ :node | num := num + 1 ].
 	^ num
 ]
 
-{ #category : 'enumerating' }
-HiDeNode >> operationHoldersDo: aBlock [
-
-	^ self subclassResponsibility
-]
-
-{ #category : 'enumerating' }
-HiDeNode >> operationsDo: aBlock [
-
-	self operationHoldersDo: [ :holder | aBlock value: holder operation ]
-]
-
 { #category : 'adding/removing' }
-HiDeNode >> removeOperation: aHiDeAbstractOperation [
+HiDeNode >> remove: aHiDeAbstractOperation [
 
 	^ self subclassResponsibility
 ]
@@ -105,4 +104,21 @@ HiDeNode >> select: aBlock [
 	^ Array streamContents: [ :stream |
 		  self do: [ :node |
 			  (aBlock value: node) ifTrue: [ stream nextPut: node ] ] ]
+]
+
+{ #category : 'enumerating' }
+HiDeNode >> selectNodes: aBlock [
+
+	^ Array streamContents: [ :stream |
+		  self nodesDo: [ :node |
+			  (aBlock value: node) ifTrue: [ stream nextPut: node ] ] ]
+]
+
+{ #category : 'accessing' }
+HiDeNode >> size [
+
+	| num |
+	num := 0.
+	self do: [ :object | num := num + 1 ].
+	^ num
 ]

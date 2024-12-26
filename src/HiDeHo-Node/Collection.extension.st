@@ -1,7 +1,7 @@
 Extension { #name : 'Collection' }
 
 { #category : '*HiDeHo-Node' }
-Collection >> asHiDeSequence [
+Collection >> asHiDeClosure [
 
-	^ HiDeSequence withAll: self
+	^ HiDeClosure withAll: self
 ]

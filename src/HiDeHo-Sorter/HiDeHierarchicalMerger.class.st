@@ -7,9 +7,9 @@ Class {
 }
 
 { #category : 'merging' }
-HiDeHierarchicalMerger >> createMerge: aCollectionOfHiDeSequence [
+HiDeHierarchicalMerger >> createMerge: aCollectionOfHiDeClosure [
 
-	^ (HiDeSequence new: aCollectionOfHiDeSequence size)
-		  addAll: aCollectionOfHiDeSequence;
+	^ (HiDeClosure new: aCollectionOfHiDeClosure size)
+		  addAll: aCollectionOfHiDeClosure;
 		  yourself
 ]

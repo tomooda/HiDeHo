@@ -2,7 +2,7 @@ Class {
 	#name : 'HiDeAbstractOperationTest',
 	#superclass : 'TestCase',
 	#instVars : [
-		'op'
+		'item'
 	],
 	#category : 'HiDeHo-Node-Tests',
 	#package : 'HiDeHo-Node',
@@ -12,35 +12,35 @@ Class {
 { #category : 'running' }
 HiDeAbstractOperationTest >> setUp [
 
-	op := 1 asHiDeOperationHolder
+	item := 1 asHiDeItem
 ]
 
 { #category : 'tests' }
-HiDeAbstractOperationTest >> testAllOperationsSatisfy [
+HiDeAbstractOperationTest >> testAllNodesSatisfy [
 
-	self assert: (op allOperationsSatisfy: [ :o | true ]).
-	self deny: (op allOperationsSatisfy: [ :o | false ])
+	self assert: (item allNodesSatisfy: [ :o | true ]).
+	self deny: (item allNodesSatisfy: [ :o | false ])
 ]
 
 { #category : 'tests' }
 HiDeAbstractOperationTest >> testAllSatisfy [
 
-	self assert: (op allSatisfy: [ :o | true ]).
-	self deny: (op allSatisfy: [ :o | false ])
+	self assert: (item allSatisfy: [ :o | true ]).
+	self deny: (item allSatisfy: [ :o | false ])
 ]
 
 { #category : 'tests' }
-HiDeAbstractOperationTest >> testAnyOperationSatisfy [
+HiDeAbstractOperationTest >> testAnyNodeSatisfy [
 
-	self assert: (op anyOperationSatisfy: [ :o | true ]).
-	self deny: (op anyOperationSatisfy: [ :o | false ])
+	self assert: (item anyNodeSatisfy: [ :o | true ]).
+	self deny: (item anyNodeSatisfy: [ :o | false ])
 ]
 
 { #category : 'tests' }
 HiDeAbstractOperationTest >> testAnySatisfy [
 
-	self assert: (op anySatisfy: [ :o | true ]).
-	self deny: (op anySatisfy: [ :o | false ])
+	self assert: (item anySatisfy: [ :o | true ]).
+	self deny: (item anySatisfy: [ :o | false ])
 ]
 
 { #category : 'tests' }
@@ -48,55 +48,61 @@ HiDeAbstractOperationTest >> testDo [
 
 	| count |
 	count := 0.
-	op do: [ :o |
-		self assert: op identicalTo: o.
+	item do: [ :object |
+		self assert: object identicalTo: item value.
 		count := count + 1 ].
 	self assert: count equals: 1
 ]
 
 { #category : 'tests' }
-HiDeAbstractOperationTest >> testIncludesOperation [
+HiDeAbstractOperationTest >> testIncludes [
 
-	self assert: (op includesOperation: 1).
-	self deny: (op includesOperation: 0)
+	self assert: (item includes: 1).
+	self deny: (item includes: 0)
 ]
 
 { #category : 'tests' }
-HiDeAbstractOperationTest >> testIsOperationHolder [
+HiDeAbstractOperationTest >> testIsHiDeClosure [
 
-	self assert: op isOperationHolder
+	self deny: item isHiDeClosure
 ]
 
 { #category : 'tests' }
-HiDeAbstractOperationTest >> testIsSequence [
+HiDeAbstractOperationTest >> testIsHiDeItem [
 
-	self deny: op isSequence
+	self assert: item isHiDeItem
 ]
 
 { #category : 'tests' }
-HiDeAbstractOperationTest >> testNumberOfOperations [
-
-	self assert: op numberOfOperations equals: 1
-]
-
-{ #category : 'tests' }
-HiDeAbstractOperationTest >> testOperationHoldersDo [
+HiDeAbstractOperationTest >> testItemsDo [
 
 	| count |
 	count := 0.
-	op operationHoldersDo: [ :holder |
-		self assert: holder identicalTo: op.
+	item itemsDo: [ :holder |
+		self assert: holder identicalTo: item.
 		count := count + 1 ].
 	self assert: count equals: 1
 ]
 
 { #category : 'tests' }
-HiDeAbstractOperationTest >> testOperationsDo [
+HiDeAbstractOperationTest >> testNodesDo [
 
 	| count |
 	count := 0.
-	op operationsDo: [ :o |
-		self assert: o equals: 1.
+	item nodesDo: [ :holder |
+		self assert: holder identicalTo: item.
 		count := count + 1 ].
 	self assert: count equals: 1
+]
+
+{ #category : 'tests' }
+HiDeAbstractOperationTest >> testNumberOfNodes [
+
+	self assert: item numberOfNodes equals: 1
+]
+
+{ #category : 'tests' }
+HiDeAbstractOperationTest >> testSize [
+
+	self assert: item size equals: 1
 ]

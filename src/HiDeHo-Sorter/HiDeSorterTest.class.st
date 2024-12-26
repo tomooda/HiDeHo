@@ -20,16 +20,16 @@ HiDeSorterTest >> testFlatCluster [
 		add: 3;
 		add: 5;
 		add: 2.
-	self assert: sorter size equals: 2.
-	cluster1 := sorter at: 1.
-	cluster2 := sorter at: 2.
-	self assert: cluster1 size equals: 4.
-	self assert: (cluster1 at: 1) operation equals: 0.
-	self assert: (cluster1 at: 2) operation equals: 1.
-	self assert: (cluster1 at: 3) operation equals: 3.
-	self assert: (cluster1 at: 4) operation equals: 2.
-	self assert: cluster2 isOperationHolder.
-	self assert: (cluster2 includesOperation: 5)
+	self assert: sorter numberOfNodes equals: 2.
+	cluster1 := sorter nodeAt: 1.
+	cluster2 := sorter nodeAt: 2.
+	self assert: cluster1 numberOfNodes equals: 4.
+	self assert: (cluster1 nodeAt: 1) value equals: 0.
+	self assert: (cluster1 nodeAt: 2) value equals: 1.
+	self assert: (cluster1 nodeAt: 3) value equals: 3.
+	self assert: (cluster1 nodeAt: 4) value equals: 2.
+	self assert: cluster2 isHiDeItem.
+	self assert: (cluster2 includes: 5)
 ]
 
 { #category : 'tests' }
@@ -46,14 +46,14 @@ HiDeSorterTest >> testHierarchicalCluster [
 		add: 3;
 		add: 5;
 		add: 2.
-	self assert: sorter size equals: 2.
-	cluster1 := sorter at: 1.
-	cluster2 := sorter at: 2.
-	self assert: cluster1 size equals: 3.
-	self assert: ((cluster1 at: 1) at: 1) operation equals: 0.
-	self assert: ((cluster1 at: 1) at: 2) operation equals: 1.
-	self assert: (cluster1 at: 2) operation equals: 3.
-	self assert: (cluster1 at: 3) operation equals: 2.
-	self assert: cluster2 isOperationHolder.
-	self assert: cluster2 operation equals: 5
+	self assert: sorter numberOfNodes equals: 2.
+	cluster1 := sorter nodeAt: 1.
+	cluster2 := sorter nodeAt: 2.
+	self assert: cluster1 numberOfNodes equals: 3.
+	self assert: ((cluster1 nodeAt: 1) nodeAt: 1) value equals: 0.
+	self assert: ((cluster1 nodeAt: 1) nodeAt: 2) value equals: 1.
+	self assert: (cluster1 nodeAt: 2) value equals: 3.
+	self assert: (cluster1 nodeAt: 3) value equals: 2.
+	self assert: cluster2 isHiDeItem.
+	self assert: cluster2 value equals: 5
 ]

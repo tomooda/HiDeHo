@@ -57,3 +57,22 @@ HiDeSorterTest >> testHierarchicalCluster [
 	self assert: cluster2 isHiDeItem.
 	self assert: cluster2 value equals: 5
 ]
+
+{ #category : 'tests' }
+HiDeSorterTest >> testIndexOfIfAbsent [
+
+	| sorter |
+	sorter := HiDeSorter new.
+	sorter
+		useHierarchicalMerger;
+		matcher: [ :i1 :i2 | (i1 - i2) abs <= 1 ] asHiDeMatcher.
+	sorter
+		add: 0;
+		add: 1;
+		add: 3;
+		add: 5;
+		add: 2.
+	self assert: (sorter indexOf: 2 ifAbsent: [ 0 ]) equals: 1.
+	self assert: (sorter indexOf: 5 ifAbsent: [ 0 ]) equals: 2.
+	self assert: (sorter indexOf: 10 ifAbsent: [ 0 ]) equals: 0
+]

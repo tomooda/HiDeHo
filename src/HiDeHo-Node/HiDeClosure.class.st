@@ -102,6 +102,20 @@ HiDeClosure >> asHiDeItem [
 ]
 
 { #category : 'accessing' }
+HiDeClosure >> identityIndexOf: anObject [
+
+	^ self identityIndexOf: anObject ifAbsent: [ 0 ]
+]
+
+{ #category : 'accessing' }
+HiDeClosure >> identityIndexOf: anObject ifAbsent: errorBlock [
+
+	1 to: self numberOfNodes do: [ :index |
+		((self nodeAt: index) identityIncludes: anObject) ifTrue: [ ^ index ] ].
+	^ errorBlock value
+]
+
+{ #category : 'accessing' }
 HiDeClosure >> indexOf: anObject [
 
 	^ self indexOf: anObject ifAbsent: [ 0 ]
@@ -111,9 +125,7 @@ HiDeClosure >> indexOf: anObject [
 HiDeClosure >> indexOf: anObject ifAbsent: errorBlock [
 
 	1 to: self numberOfNodes do: [ :index |
-		| node |
-		node := self nodeAt: index.
-		(node isHiDeItem and: [ node value = anObject ]) ifTrue: [ ^ index ] ].
+		((self nodeAt: index) includes: anObject) ifTrue: [ ^ index ] ].
 	^ errorBlock value
 ]
 
@@ -159,6 +171,12 @@ HiDeClosure >> itemsDo: aBlock [
 HiDeClosure >> nodeAt: anInteger [
 
 	^ collection at: anInteger
+]
+
+{ #category : 'accessing' }
+HiDeClosure >> nodeAt: anInteger ifAbsent: aBlockClosure [
+
+	^ collection at: anInteger ifAbsent: aBlockClosure
 ]
 
 { #category : 'enumerating' }

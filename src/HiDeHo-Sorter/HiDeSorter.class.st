@@ -36,6 +36,24 @@ HiDeSorter >> defaultMerger [
 	^ HiDeFlatMerger new
 ]
 
+{ #category : 'accessing' }
+HiDeSorter >> identityIndexOf: anObject [
+
+	^ self identityIndexOf: anObject ifAbsent: [ 0 ]
+]
+
+{ #category : 'accessing' }
+HiDeSorter >> identityIndexOf: anObject ifAbsent: errorBlock [
+
+	^ closure identityIndexOf: anObject ifAbsent: errorBlock
+]
+
+{ #category : 'accessing' }
+HiDeSorter >> indexOf: anObject ifAbsent: errorBlock [
+
+	^ closure indexOf: anObject ifAbsent: errorBlock
+]
+
 { #category : 'initialization' }
 HiDeSorter >> initialize [
 

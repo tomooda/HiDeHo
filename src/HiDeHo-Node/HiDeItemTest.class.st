@@ -1,5 +1,5 @@
 Class {
-	#name : 'HiDeAbstractOperationTest',
+	#name : 'HiDeItemTest',
 	#superclass : 'TestCase',
 	#instVars : [
 		'item'
@@ -10,41 +10,41 @@ Class {
 }
 
 { #category : 'running' }
-HiDeAbstractOperationTest >> setUp [
+HiDeItemTest >> setUp [
 
 	item := 1 asHiDeItem
 ]
 
 { #category : 'tests' }
-HiDeAbstractOperationTest >> testAllNodesSatisfy [
+HiDeItemTest >> testAllNodesSatisfy [
 
 	self assert: (item allNodesSatisfy: [ :o | true ]).
 	self deny: (item allNodesSatisfy: [ :o | false ])
 ]
 
 { #category : 'tests' }
-HiDeAbstractOperationTest >> testAllSatisfy [
+HiDeItemTest >> testAllSatisfy [
 
 	self assert: (item allSatisfy: [ :o | true ]).
 	self deny: (item allSatisfy: [ :o | false ])
 ]
 
 { #category : 'tests' }
-HiDeAbstractOperationTest >> testAnyNodeSatisfy [
+HiDeItemTest >> testAnyNodeSatisfy [
 
 	self assert: (item anyNodeSatisfy: [ :o | true ]).
 	self deny: (item anyNodeSatisfy: [ :o | false ])
 ]
 
 { #category : 'tests' }
-HiDeAbstractOperationTest >> testAnySatisfy [
+HiDeItemTest >> testAnySatisfy [
 
 	self assert: (item anySatisfy: [ :o | true ]).
 	self deny: (item anySatisfy: [ :o | false ])
 ]
 
 { #category : 'tests' }
-HiDeAbstractOperationTest >> testDo [
+HiDeItemTest >> testDo [
 
 	| count |
 	count := 0.
@@ -55,26 +55,33 @@ HiDeAbstractOperationTest >> testDo [
 ]
 
 { #category : 'tests' }
-HiDeAbstractOperationTest >> testIncludes [
+HiDeItemTest >> testIdentityIncludes [
 
 	self assert: (item includes: 1).
 	self deny: (item includes: 0)
 ]
 
 { #category : 'tests' }
-HiDeAbstractOperationTest >> testIsHiDeClosure [
+HiDeItemTest >> testIncludes [
+
+	self assert: (item includes: 1).
+	self deny: (item includes: 0)
+]
+
+{ #category : 'tests' }
+HiDeItemTest >> testIsHiDeClosure [
 
 	self deny: item isHiDeClosure
 ]
 
 { #category : 'tests' }
-HiDeAbstractOperationTest >> testIsHiDeItem [
+HiDeItemTest >> testIsHiDeItem [
 
 	self assert: item isHiDeItem
 ]
 
 { #category : 'tests' }
-HiDeAbstractOperationTest >> testItemsDo [
+HiDeItemTest >> testItemsDo [
 
 	| count |
 	count := 0.
@@ -85,7 +92,7 @@ HiDeAbstractOperationTest >> testItemsDo [
 ]
 
 { #category : 'tests' }
-HiDeAbstractOperationTest >> testNodesDo [
+HiDeItemTest >> testNodesDo [
 
 	| count |
 	count := 0.
@@ -96,13 +103,13 @@ HiDeAbstractOperationTest >> testNodesDo [
 ]
 
 { #category : 'tests' }
-HiDeAbstractOperationTest >> testNumberOfNodes [
+HiDeItemTest >> testNumberOfNodes [
 
 	self assert: item numberOfNodes equals: 1
 ]
 
 { #category : 'tests' }
-HiDeAbstractOperationTest >> testSize [
+HiDeItemTest >> testSize [
 
 	self assert: item size equals: 1
 ]

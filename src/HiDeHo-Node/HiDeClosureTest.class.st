@@ -64,6 +64,14 @@ HiDeClosureTest >> testDo [
 ]
 
 { #category : 'tests' }
+HiDeClosureTest >> testIdentityIncludes [
+
+	self assert: (closure includes: 1).
+	self assert: (closure includes: 2).
+	self deny: (closure includes: 0)
+]
+
+{ #category : 'tests' }
 HiDeClosureTest >> testIncludes [
 
 	self assert: (closure includes: 1).

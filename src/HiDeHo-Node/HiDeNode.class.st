@@ -54,6 +54,12 @@ HiDeNode >> do: aBlock [
 ]
 
 { #category : 'testing' }
+HiDeNode >> identityIncludes: anObject [
+
+	^ self anySatisfy: [ :object | object == anObject ]
+]
+
+{ #category : 'testing' }
 HiDeNode >> includes: anObject [
 
 	^ self anySatisfy: [ :object | object = anObject ]

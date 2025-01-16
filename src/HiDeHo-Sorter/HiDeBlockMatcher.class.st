@@ -4,8 +4,9 @@ Class {
 	#instVars : [
 		'block'
 	],
-	#category : 'HiDeHo-Sorter',
-	#package : 'HiDeHo-Sorter'
+	#category : 'HiDeHo-Sorter-Core',
+	#package : 'HiDeHo-Sorter',
+	#tag : 'Core'
 }
 
 { #category : 'instance creation' }

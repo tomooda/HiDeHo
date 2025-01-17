@@ -6,7 +6,7 @@ Class {
 	#tag : 'Tests'
 }
 
-{ #category : 'tests' }
+{ #category : 'as yet unclassified' }
 HiDeSyntaxSelectorAccessorTest >> testConcat [
 
 	| node accessor |
@@ -17,6 +17,22 @@ HiDeSyntaxSelectorAccessorTest >> testConcat [
 ]
 
 { #category : 'tests' }
+HiDeSyntaxSelectorAccessorTest >> testHead [
+
+	| accessor |
+	accessor := HiDeSyntaxSelectorAccessor on: #key.
+	self assert: accessor head equals: accessor
+]
+
+{ #category : 'tests' }
+HiDeSyntaxSelectorAccessorTest >> testTail [
+
+	| accessor |
+	accessor := HiDeSyntaxSelectorAccessor on: #key.
+	self assert: accessor tail equals: nil
+]
+
+{ #category : 'as yet unclassified' }
 HiDeSyntaxSelectorAccessorTest >> testValue [
 
 	| node accessor |

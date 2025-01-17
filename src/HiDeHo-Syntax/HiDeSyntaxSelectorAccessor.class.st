@@ -17,6 +17,30 @@ HiDeSyntaxSelectorAccessor class >> on: aSymbol [
 		  yourself
 ]
 
+{ #category : 'comparing' }
+HiDeSyntaxSelectorAccessor >> = anObject [
+
+	^ self class = anObject class and: [ selector = anObject selector ]
+]
+
+{ #category : 'comparing' }
+HiDeSyntaxSelectorAccessor >> hash [
+
+	^ self class hash bitXor: selector hash
+]
+
+{ #category : 'accessing' }
+HiDeSyntaxSelectorAccessor >> head [
+
+	^ self
+]
+
+{ #category : 'accessing' }
+HiDeSyntaxSelectorAccessor >> name [
+
+	^ selector asString
+]
+
 { #category : 'accessing' }
 HiDeSyntaxSelectorAccessor >> selector [
 
@@ -27,6 +51,12 @@ HiDeSyntaxSelectorAccessor >> selector [
 HiDeSyntaxSelectorAccessor >> selector: aSymbol [
 
 	selector := aSymbol asSymbol
+]
+
+{ #category : 'accessing' }
+HiDeSyntaxSelectorAccessor >> tail [
+
+	^ nil
 ]
 
 { #category : 'accessing' }

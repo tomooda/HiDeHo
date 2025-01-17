@@ -17,6 +17,24 @@ HiDeSyntaxKeyAccessor class >> on: anObject [
 		  yourself
 ]
 
+{ #category : 'comparing' }
+HiDeSyntaxKeyAccessor >> = anObject [
+
+	^ self class = anObject class and: [ key = anObject key ]
+]
+
+{ #category : 'comparing' }
+HiDeSyntaxKeyAccessor >> hash [
+
+	^ self class hash bitXor: key hash
+]
+
+{ #category : 'accessing' }
+HiDeSyntaxKeyAccessor >> head [
+
+	^ self
+]
+
 { #category : 'accessing' }
 HiDeSyntaxKeyAccessor >> key [
 
@@ -27,6 +45,18 @@ HiDeSyntaxKeyAccessor >> key [
 HiDeSyntaxKeyAccessor >> key: anObject [
 
 	key := anObject
+]
+
+{ #category : 'accessing' }
+HiDeSyntaxKeyAccessor >> name [
+
+	^ key asString
+]
+
+{ #category : 'accessing' }
+HiDeSyntaxKeyAccessor >> tail [
+
+	^ nil
 ]
 
 { #category : 'accessing' }

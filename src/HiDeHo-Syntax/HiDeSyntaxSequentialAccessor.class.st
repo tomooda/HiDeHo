@@ -41,6 +41,12 @@ HiDeSyntaxSequentialAccessor >> , aHiDeSyntaxAccessor [
 		  (accessors copyWith: aHiDeSyntaxAccessor)
 ]
 
+{ #category : 'comparing' }
+HiDeSyntaxSequentialAccessor >> = anObject [
+
+	^ self class = anObject class and: [ accessors = anObject accessors ]
+]
+
 { #category : 'accessing' }
 HiDeSyntaxSequentialAccessor >> accessors [
 
@@ -51,6 +57,38 @@ HiDeSyntaxSequentialAccessor >> accessors [
 HiDeSyntaxSequentialAccessor >> accessors: anArrayOfHiDeSyntaxAccessor [
 
 	accessors := anArrayOfHiDeSyntaxAccessor
+]
+
+{ #category : 'comparing' }
+HiDeSyntaxSequentialAccessor >> hash [
+
+	^ self class hash bitXor: accessors hash
+]
+
+{ #category : 'accessing' }
+HiDeSyntaxSequentialAccessor >> head [
+
+	^ accessors ifNotEmpty: #first ifEmpty: [ nil ]
+]
+
+{ #category : 'accessing' }
+HiDeSyntaxSequentialAccessor >> name [
+
+	^ String streamContents: [ :stream |
+		  accessors
+			  do: [ :accessor | accessor printOn: stream ]
+			  separatedBy: [ stream nextPut: $- ] ]
+]
+
+{ #category : 'accessing' }
+HiDeSyntaxSequentialAccessor >> tail [
+
+	^ accessors size > 2
+		  ifTrue: [ self class withAll: accessors copyWithoutFirst ]
+		  ifFalse: [
+			  accessors size = 2
+				  ifTrue: [ accessors at: 2 ]
+				  ifFalse: [ nil ] ]
 ]
 
 { #category : 'accessing' }

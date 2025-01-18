@@ -19,12 +19,22 @@ HiDeSyntaxComparator class >> from: anObject to: anotherObject [
 		  yourself
 ]
 
+{ #category : 'utilities' }
+HiDeSyntaxComparator class >> intersectionBetween: anObject and: anotherObject [
+
+	^ HiDeSyntaxStencil
+		  node: anObject
+		  accessors: (Array streamContents: [ :stream |
+				   (self from: anObject to: anotherObject) intersectionsDo: [
+					   :accessor | stream nextPut: accessor ] ])
+]
+
 { #category : 'enumerating' }
 HiDeSyntaxComparator >> accessor: aHiDeSyntaxAccessor intersectionsDo: aBlock additionsDo: additionBlock deletionsDo: deletionBlock [
 
 	| n1 n2 set1 set2 |
-	n1 := aHiDeSyntaxAccessor value: node1.
-	n2 := aHiDeSyntaxAccessor value: node2.
+	n1 := aHiDeSyntaxAccessor read: node1.
+	n2 := aHiDeSyntaxAccessor read: node2.
 	n1 = n2 ifTrue: [
 		aBlock value: aHiDeSyntaxAccessor.
 		^ self ].
@@ -50,6 +60,15 @@ HiDeSyntaxComparator >> accessor: aHiDeSyntaxAccessor intersectionsDo: aBlock ad
 	n2 syntaxAccessorsDo: [ :accessor |
 		(set1 includes: accessor) ifFalse: [
 			additionBlock value: aHiDeSyntaxAccessor , accessor ] ]
+]
+
+{ #category : 'enumerating' }
+HiDeSyntaxComparator >> intersectionsDo: aBlock [
+
+	self
+		intersectionsDo: aBlock
+		additionsDo: [ :accessor |  ]
+		deletionsDo: [ :accessor |  ]
 ]
 
 { #category : 'enumerating' }

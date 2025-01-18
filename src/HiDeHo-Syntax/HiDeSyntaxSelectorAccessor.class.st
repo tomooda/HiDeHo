@@ -42,6 +42,12 @@ HiDeSyntaxSelectorAccessor >> name [
 ]
 
 { #category : 'accessing' }
+HiDeSyntaxSelectorAccessor >> read: anObject [
+
+	^ anObject perform: selector asSymbol
+]
+
+{ #category : 'accessing' }
 HiDeSyntaxSelectorAccessor >> selector [
 
 	^ selector
@@ -60,7 +66,7 @@ HiDeSyntaxSelectorAccessor >> tail [
 ]
 
 { #category : 'accessing' }
-HiDeSyntaxSelectorAccessor >> value: anObject [
+HiDeSyntaxSelectorAccessor >> write: anObject to: anotherObject [
 
-	^ anObject perform: selector asSymbol
+	^ anotherObject perform: (selector , ':') asSymbol with: anObject
 ]

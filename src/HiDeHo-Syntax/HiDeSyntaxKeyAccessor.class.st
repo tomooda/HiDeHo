@@ -47,10 +47,22 @@ HiDeSyntaxKeyAccessor >> key: anObject [
 	key := anObject
 ]
 
+{ #category : 'enumerating' }
+HiDeSyntaxKeyAccessor >> keyAccessorsDo: aBlock [
+
+	aBlock value: self
+]
+
 { #category : 'accessing' }
 HiDeSyntaxKeyAccessor >> name [
 
 	^ key asString
+]
+
+{ #category : 'accessing' }
+HiDeSyntaxKeyAccessor >> read: anObject [
+
+	^ anObject at: key
 ]
 
 { #category : 'accessing' }
@@ -60,7 +72,7 @@ HiDeSyntaxKeyAccessor >> tail [
 ]
 
 { #category : 'accessing' }
-HiDeSyntaxKeyAccessor >> value: anObject [
+HiDeSyntaxKeyAccessor >> write: anObject to: anotherObject [
 
-	^ anObject at: key
+	^ anotherObject at: key put: anObject
 ]

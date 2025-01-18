@@ -6,7 +6,7 @@ Class {
 	#tag : 'Tests'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'tests' }
 HiDeSyntaxSequentialAccessorTest >> testConcat [
 
 	| node accessor |
@@ -15,7 +15,7 @@ HiDeSyntaxSequentialAccessorTest >> testConcat [
 		             with: (HiDeSyntaxKeyAccessor on: 'b')
 		             with: (HiDeSyntaxSelectorAccessor on: #key))
 	            , (HiDeSyntaxKeyAccessor on: 'a').
-	self assert: (accessor value: node) equals: 1
+	self assert: (accessor read: node) equals: 1
 ]
 
 { #category : 'tests' }
@@ -48,7 +48,7 @@ HiDeSyntaxSequentialAccessorTest >> testTail [
 	self assert: accessor equals: nil
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'tests' }
 HiDeSyntaxSequentialAccessorTest >> testValue [
 
 	| node accessor |
@@ -56,5 +56,5 @@ HiDeSyntaxSequentialAccessorTest >> testValue [
 	accessor := HiDeSyntaxSequentialAccessor
 		            with: (HiDeSyntaxSelectorAccessor on: #key)
 		            with: (HiDeSyntaxSelectorAccessor on: #value).
-	self assert: (accessor value: node) equals: 2
+	self assert: (accessor read: node) equals: 2
 ]

@@ -40,13 +40,19 @@ HiDeSyntaxRootAccessor >> name [
 ]
 
 { #category : 'accessing' }
+HiDeSyntaxRootAccessor >> read: anObject [
+
+	^ anObject
+]
+
+{ #category : 'accessing' }
 HiDeSyntaxRootAccessor >> tail [
 
 	^ nil
 ]
 
 { #category : 'accessing' }
-HiDeSyntaxRootAccessor >> value: anObject [
+HiDeSyntaxRootAccessor >> write: anObject to: anotherObject [
 
 	^ anObject
 ]

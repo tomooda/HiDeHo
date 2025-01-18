@@ -6,14 +6,14 @@ Class {
 	#tag : 'Tests'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'tests' }
 HiDeSyntaxRootAccessorTest >> testConcat [
 
 	| node accessor |
 	node := { ('a' -> 1) } asDictionary.
 	accessor := HiDeSyntaxRootAccessor current
 	            , (HiDeSyntaxKeyAccessor on: 'a').
-	self assert: (accessor value: node) equals: 1
+	self assert: (accessor read: node) equals: 1
 ]
 
 { #category : 'tests' }
@@ -32,7 +32,7 @@ HiDeSyntaxRootAccessorTest >> testTail [
 	self assert: accessor tail equals: nil
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'tests' }
 HiDeSyntaxRootAccessorTest >> testValue [
 
 	| node accessor |
@@ -40,5 +40,5 @@ HiDeSyntaxRootAccessorTest >> testValue [
 		        ('a' -> 1).
 		        ('b' -> 2) } asDictionary.
 	accessor := HiDeSyntaxRootAccessor current.
-	self assert: (accessor value: node) equals: node
+	self assert: (accessor read: node) equals: node
 ]

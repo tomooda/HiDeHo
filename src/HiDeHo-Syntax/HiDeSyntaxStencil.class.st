@@ -45,9 +45,9 @@ HiDeSyntaxStencil >> at: aHiDeSyntaxAccessor [
 	^ tails
 		  ifNotEmpty: [
 			  self class
-				  node: (aHiDeSyntaxAccessor value: node)
+				  node: (aHiDeSyntaxAccessor read: node)
 				  accessors: tails asArray ]
-		  ifEmpty: [ aHiDeSyntaxAccessor value: node ]
+		  ifEmpty: [ aHiDeSyntaxAccessor read: node ]
 ]
 
 { #category : 'accessing' }

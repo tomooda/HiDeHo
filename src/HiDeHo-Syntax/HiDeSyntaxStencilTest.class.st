@@ -28,7 +28,7 @@ HiDeSyntaxStencilTest >> testAccessorsDo [
 		             node syntaxAccessorsDo: [ :accessor |
 			             stream nextPut: accessor ] ].
 	self assert: accessors size equals: 2.
-	a := accessors first value: node.
+	a := accessors first read: node.
 	self assert: a node identicalTo: (node node at: 'a').
 	self assert: a accessors equals: {
 			(HiDeSyntaxKeyAccessor on: 'a1').
@@ -36,8 +36,8 @@ HiDeSyntaxStencilTest >> testAccessorsDo [
 	self
 		assert: (Array streamContents: [ :stream |
 				 a syntaxAccessorsDo: [ :accessor |
-					 stream nextPut: (accessor value: a) ] ])
+					 stream nextPut: (accessor read: a) ] ])
 		equals: { 1. 2 }.
-	c := accessors second value: node.
+	c := accessors second read: node.
 	self assert: c equals: 5
 ]

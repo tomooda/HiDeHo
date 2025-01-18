@@ -24,6 +24,12 @@ HiDeSyntaxAccessor >> = anObject [
 	^ self subclassResponsibility
 ]
 
+{ #category : 'enumerating' }
+HiDeSyntaxAccessor >> do: aBlock [
+
+	aBlock value: self
+]
+
 { #category : 'comparing' }
 HiDeSyntaxAccessor >> hash [
 
@@ -34,6 +40,12 @@ HiDeSyntaxAccessor >> hash [
 HiDeSyntaxAccessor >> head [
 
 	^ self subclassResponsibility
+]
+
+{ #category : 'enumerating' }
+HiDeSyntaxAccessor >> keyAccessorsDo: aBlock [
+
+	
 ]
 
 { #category : 'accessing' }
@@ -49,13 +61,19 @@ HiDeSyntaxAccessor >> printOn: aStream [
 ]
 
 { #category : 'accessing' }
+HiDeSyntaxAccessor >> read: anObject [
+
+	^ self subclassResponsibility
+]
+
+{ #category : 'accessing' }
 HiDeSyntaxAccessor >> tail [
 
 	^ self subclassResponsibility
 ]
 
 { #category : 'accessing' }
-HiDeSyntaxAccessor >> value: anObject [
+HiDeSyntaxAccessor >> write: anObject to: anotherObject [
 
 	^ self subclassResponsibility
 ]

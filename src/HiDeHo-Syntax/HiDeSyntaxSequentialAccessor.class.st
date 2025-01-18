@@ -59,6 +59,12 @@ HiDeSyntaxSequentialAccessor >> accessors: anArrayOfHiDeSyntaxAccessor [
 	accessors := anArrayOfHiDeSyntaxAccessor
 ]
 
+{ #category : 'enumerating' }
+HiDeSyntaxSequentialAccessor >> do: aBlock [
+
+	accessors do: [ :accessor | accessor do: aBlock ]
+]
+
 { #category : 'comparing' }
 HiDeSyntaxSequentialAccessor >> hash [
 
@@ -71,6 +77,12 @@ HiDeSyntaxSequentialAccessor >> head [
 	^ accessors ifNotEmpty: #first ifEmpty: [ nil ]
 ]
 
+{ #category : 'enumerating' }
+HiDeSyntaxSequentialAccessor >> keyAccessorsDo: aBlock [
+
+	accessors do: [ :accessor | accessor keyAccessorsDo: aBlock ]
+]
+
 { #category : 'accessing' }
 HiDeSyntaxSequentialAccessor >> name [
 
@@ -78,6 +90,14 @@ HiDeSyntaxSequentialAccessor >> name [
 		  accessors
 			  do: [ :accessor | accessor printOn: stream ]
 			  separatedBy: [ stream nextPut: $- ] ]
+]
+
+{ #category : 'accessing' }
+HiDeSyntaxSequentialAccessor >> read: anObject [
+
+	^ accessors
+		  inject: anObject
+		  into: [ :ast :accessor | accessor read: ast ]
 ]
 
 { #category : 'accessing' }
@@ -92,9 +112,12 @@ HiDeSyntaxSequentialAccessor >> tail [
 ]
 
 { #category : 'accessing' }
-HiDeSyntaxSequentialAccessor >> value: anObject [
+HiDeSyntaxSequentialAccessor >> write: anObject to: anotherObject [
 
-	^ accessors
-		  inject: anObject
-		  into: [ :ast :accessor | accessor value: ast ]
+	| node |
+	accessors isEmpty ifTrue: [ ^ nil ].
+	node := anotherObject.
+	1 to: accessors size - 1 do: [ :index |
+	node := (accessors at: index) read: node ].
+	^ accessors last write: anObject to: node
 ]

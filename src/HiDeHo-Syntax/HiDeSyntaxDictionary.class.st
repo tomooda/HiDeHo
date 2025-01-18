@@ -8,6 +8,23 @@ Class {
 	#tag : 'Core'
 }
 
+{ #category : 'accessing' }
+HiDeSyntaxDictionary >> at: anObject [
+
+	^ self at: anObject ifAbsentPut: [ self class new ]
+]
+
+{ #category : 'accessing' }
+HiDeSyntaxDictionary >> intersectionWith: aHiDeSyntaxDictionary [
+
+	| intersection |
+	intersection := self class new.
+	(HiDeSyntaxComparator from: self to: aHiDeSyntaxDictionary)
+		intersectionsDo: [ :accessor |
+		accessor write: (accessor read: self) to: intersection ].
+	^ intersection
+]
+
 { #category : 'comparing' }
 HiDeSyntaxDictionary >> syntaxAccessorsDo: aBlock [
 

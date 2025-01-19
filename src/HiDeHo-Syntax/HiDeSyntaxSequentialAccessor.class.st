@@ -77,6 +77,12 @@ HiDeSyntaxSequentialAccessor >> head [
 	^ accessors ifNotEmpty: #first ifEmpty: [ nil ]
 ]
 
+{ #category : 'testing' }
+HiDeSyntaxSequentialAccessor >> isSyntaxSequentialAccessor [
+
+	^ true
+]
+
 { #category : 'enumerating' }
 HiDeSyntaxSequentialAccessor >> keyAccessorsDo: aBlock [
 

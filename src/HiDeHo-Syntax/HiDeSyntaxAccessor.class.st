@@ -15,7 +15,12 @@ HiDeSyntaxAccessor class >> isAbstract [
 { #category : 'copying' }
 HiDeSyntaxAccessor >> , aHiDeSyntaxAccessor [
 
-	^ HiDeSyntaxSequentialAccessor with: self with: aHiDeSyntaxAccessor
+	^ aHiDeSyntaxAccessor isSyntaxSequentialAccessor
+		  ifTrue: [
+			  HiDeSyntaxSequentialAccessor withAll:
+				  (aHiDeSyntaxAccessor accessors copyWithFirst: self) ]
+		  ifFalse: [
+		  HiDeSyntaxSequentialAccessor with: self with: aHiDeSyntaxAccessor ]
 ]
 
 { #category : 'comparing' }
@@ -40,6 +45,12 @@ HiDeSyntaxAccessor >> hash [
 HiDeSyntaxAccessor >> head [
 
 	^ self subclassResponsibility
+]
+
+{ #category : 'testing' }
+HiDeSyntaxAccessor >> isSyntaxSequentialAccessor [
+
+	^ false
 ]
 
 { #category : 'enumerating' }

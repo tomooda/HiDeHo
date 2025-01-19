@@ -62,7 +62,7 @@ HiDeSyntaxStencil >> node: anObject [
 	node := anObject
 ]
 
-{ #category : 'comparing' }
+{ #category : 'enumerating' }
 HiDeSyntaxStencil >> syntaxAccessorsDo: aBlock [
 
 	| done |

@@ -9,6 +9,19 @@ Class {
 }
 
 { #category : 'accessing' }
+HiDeSyntaxDictionary >> \ aHiDeSyntaxDictionary [
+
+	| intersection |
+	intersection := self class new.
+	(HiDeSyntaxComparator from: aHiDeSyntaxDictionary to: self)
+		intersectionsDo: [ :accessor |  ]
+		additionsDo: [ :accessor |
+		accessor write: (accessor read: self) to: intersection ]
+		deletionsDo: [ :accessor |  ].
+	^ intersection
+]
+
+{ #category : 'accessing' }
 HiDeSyntaxDictionary >> at: anObject [
 
 	^ self at: anObject ifAbsentPut: [ self class new ]
@@ -25,8 +38,16 @@ HiDeSyntaxDictionary >> intersectionWith: aHiDeSyntaxDictionary [
 	^ intersection
 ]
 
-{ #category : 'comparing' }
+{ #category : 'enumerating' }
 HiDeSyntaxDictionary >> syntaxAccessorsDo: aBlock [
 
 	self keysDo: [ :key | aBlock value: (HiDeSyntaxKeyAccessor on: key) ]
+]
+
+{ #category : 'accessing' }
+HiDeSyntaxDictionary >> syntaxAccessorsToTips [
+
+	^ Array streamContents: [ :stream |
+		  self syntaxAccessorsToTipsDo: [ :accessor |
+			  stream nextPut: accessor ] ]
 ]

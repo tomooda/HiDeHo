@@ -24,7 +24,13 @@ HiDeSyntaxDictionary >> \ aHiDeSyntaxDictionary [
 { #category : 'accessing' }
 HiDeSyntaxDictionary >> at: anObject [
 
-	^ self at: anObject ifAbsentPut: [ self class new ]
+	^ self at: anObject ifAbsent: [ self errorKeyNotFound: anObject ]
+]
+
+{ #category : 'private' }
+HiDeSyntaxDictionary >> errorKeyNotFound: aKey [
+
+	^ HiDeSyntaxDictionaryKeyNotFound signalFor: aKey
 ]
 
 { #category : 'accessing' }
@@ -34,7 +40,12 @@ HiDeSyntaxDictionary >> intersectionWith: aHiDeSyntaxDictionary [
 	intersection := self class new.
 	(HiDeSyntaxComparator from: self to: aHiDeSyntaxDictionary)
 		intersectionsDo: [ :accessor |
-		accessor write: (accessor read: self) to: intersection ].
+			| value |
+			value := accessor read: self.
+			[ accessor write: value to: intersection ]
+				on: HiDeSyntaxDictionaryKeyNotFound
+				do: [ :ex |
+				ex resume: (ex signaler at: ex key put: self class new) ] ].
 	^ intersection
 ]
 

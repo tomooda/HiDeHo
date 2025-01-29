@@ -54,5 +54,6 @@ HiDeSyntaxRootAccessor >> tail [
 { #category : 'accessing' }
 HiDeSyntaxRootAccessor >> write: anObject to: anotherObject [
 
-	^ anObject
+	anObject syntaxAccessorsDo: [ :accessor |
+		accessor write: (accessor read: anObject) to: anotherObject ]
 ]

@@ -41,11 +41,12 @@ THiDePersistency >> load [
 { #category : 'storage' }
 THiDePersistency >> loadMetadata [
 
-	fileReference / 'metadata.json' ifExists: [ :ref |
-		([ ref readStreamDo: [ :stream | STONJSON fromStream: stream ] ]
-			 on: Exception
-			 do: [ :ex | ex return: nil ]) ifNotNil: [ :json |
-			self metadata: json ] ]
+	self metadataFileReference ifNotNil: [ :ref |
+		ref ifExists: [
+			([ ref readStreamDo: [ :stream | STONJSON fromStream: stream ] ]
+				 on: Exception
+				 do: [ :ex | ex return: nil ]) ifNotNil: [ :json |
+				self metadata: json ] ] ]
 ]
 
 { #category : 'storage' }
@@ -75,6 +76,18 @@ THiDePersistency >> metadata: aDictionary [
 ]
 
 { #category : 'accessing' }
+THiDePersistency >> metadataFileReference [
+
+	^ fileReference ifNotNil: [ fileReference / self metadataFilename ]
+]
+
+{ #category : 'accessing' }
+THiDePersistency >> metadataFilename [
+
+	^ 'metadata.json'
+]
+
+{ #category : 'accessing' }
 THiDePersistency >> name [
 
 	^ name
@@ -91,12 +104,11 @@ THiDePersistency >> save [
 { #category : 'storage' }
 THiDePersistency >> saveMetadata [
 
-	fileReference isDirectory ifTrue: [
-		| ref |
-		ref := fileReference / 'metadata.json'.
-		ref ensureDelete.
-		ref writeStreamDo: [ :stream |
-			STONJSON put: self metadata onStream: stream ] ]
+	self metadataFileReference ifNotNil: [ :ref |
+		ref parent isDirectory ifTrue: [
+			ref ensureDelete.
+			ref writeStreamDo: [ :stream |
+				STONJSON put: self metadata onStream: stream ] ] ]
 ]
 
 { #category : 'storage' }

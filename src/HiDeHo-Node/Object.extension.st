@@ -16,8 +16,3 @@ Object >> asHiDeNode [
 
 	^ self asHiDeItem
 ]
-
-{ #category : '*HiDeHo-Node' }
-Object >> isHiDeClosure [
-	^ false
-]

@@ -4,16 +4,23 @@ Trait {
 		'name',
 		'timestamp',
 		'comment',
-		'fileReference'
+		'persistencyFileReference'
 	],
-	#category : 'HiDeHo-Storage',
-	#package : 'HiDeHo-Storage'
+	#category : 'HiDeHo-Storage-Core',
+	#package : 'HiDeHo-Storage',
+	#tag : 'Core'
 }
 
 { #category : 'accessing' }
 THiDePersistency >> comment [
 
 	^ comment
+]
+
+{ #category : 'accessing' }
+THiDePersistency >> comment: aString [
+
+	comment := aString
 ]
 
 { #category : 'defaults' }
@@ -77,7 +84,7 @@ THiDePersistency >> metadata: aDictionary [
 { #category : 'accessing-files' }
 THiDePersistency >> metadataFileReference [
 
-	^ fileReference ifNotNil: [ fileReference / self metadataFilename ]
+	^ persistencyFileReference ifNotNil: [ persistencyFileReference / self metadataFilename ]
 ]
 
 { #category : 'accessing-files' }
@@ -90,6 +97,24 @@ THiDePersistency >> metadataFilename [
 THiDePersistency >> name [
 
 	^ name
+]
+
+{ #category : 'accessing' }
+THiDePersistency >> name: aString [
+
+	name := aString
+]
+
+{ #category : 'accessing-files' }
+THiDePersistency >> persistencyFileReference [
+
+	^ persistencyFileReference
+]
+
+{ #category : 'accessing-files' }
+THiDePersistency >> persistencyFileReference: aFileReference [
+
+	persistencyFileReference := aFileReference
 ]
 
 { #category : 'operations' }
@@ -120,4 +145,10 @@ THiDePersistency >> savePayload [
 THiDePersistency >> timestamp [
 
 	^ timestamp
+]
+
+{ #category : 'accessing' }
+THiDePersistency >> timestamp: aDateAndTime [
+
+	timestamp := aDateAndTime
 ]

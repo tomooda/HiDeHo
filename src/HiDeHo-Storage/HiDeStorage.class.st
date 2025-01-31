@@ -3,17 +3,27 @@ Class {
 	#superclass : 'Object',
 	#instVars : [
 		'basepath',
-		'chronicleMaxLifetime',
-		'chronicleMaxSize'
+		'chronicleMaxSize',
+		'chronicleMaxDays'
 	],
-	#category : 'HiDeHo-Storage',
-	#package : 'HiDeHo-Storage'
+	#category : 'HiDeHo-Storage-Core',
+	#package : 'HiDeHo-Storage',
+	#tag : 'Core'
 }
 
 { #category : 'accessing-files' }
 HiDeStorage >> basepath: aFileReference [
 
-	basepath := aFileReference
+	basepath := aFileReference.
+	self basepathChanged
+]
+
+{ #category : 'updating' }
+HiDeStorage >> basepathChanged [
+
+	self
+		loadSettings;
+		updateChronicle
 ]
 
 { #category : 'accessing-files' }
@@ -40,15 +50,27 @@ HiDeStorage >> chronicleFileReferenceDo: aBlock [
 ]
 
 { #category : 'accessing' }
-HiDeStorage >> chronicleMaxLifetime [
+HiDeStorage >> chronicleMaxDays [
 
-	^ chronicleMaxLifetime
+	^ chronicleMaxDays
+]
+
+{ #category : 'accessing' }
+HiDeStorage >> chronicleMaxDays: anInteger [
+
+	chronicleMaxDays := anInteger
 ]
 
 { #category : 'accessing' }
 HiDeStorage >> chronicleMaxSize [
 
 	^ chronicleMaxSize
+]
+
+{ #category : 'accessing' }
+HiDeStorage >> chronicleMaxSize: anInteger [
+
+	chronicleMaxSize := anInteger
 ]
 
 { #category : 'operations' }
@@ -76,8 +98,8 @@ HiDeStorage >> settings [
 
 	| json |
 	json := OrderedDictionary new.
-	chronicleMaxLifetime ifNotNil: [
-		json at: 'chronicle-max-lifetime' put: chronicleMaxLifetime ].
+	chronicleMaxDays ifNotNil: [
+		json at: 'chronicle-max-days' put: chronicleMaxDays ].
 	chronicleMaxSize ifNotNil: [
 		json at: 'chronicle-max-size' put: chronicleMaxSize ].
 	^ json
@@ -87,8 +109,8 @@ HiDeStorage >> settings [
 HiDeStorage >> settings: aDictionary [
 
 	aDictionary
-		at: 'chronicle-max-lifetime'
-		ifPresent: [ :value | chronicleMaxLifetime := value ];
+		at: 'chronicle-max-days'
+		ifPresent: [ :value | chronicleMaxDays := value ];
 		at: 'chronicle-max-size'
 		ifPresent: [ :value | chronicleMaxSize := value ]
 ]
@@ -103,4 +125,37 @@ HiDeStorage >> settingsFileReferenceDo: aBlock [
 HiDeStorage >> settingsFilename [
 
 	^ 'settings.json'
+]
+
+{ #category : 'accessing-files' }
+HiDeStorage >> temporaryDirectoryReferenceDo: aBlock [
+
+	| random |
+	random := Random new.
+	self basepathDo: [ :baseRef |
+		| tmpBaseRef |
+		tmpBaseRef := (baseRef / 'temporary')
+			              ensureCreateDirectory;
+			              yourself.
+		100 timesRepeat: [
+			| tmpRef |
+			tmpRef := tmpBaseRef / (String streamContents: [ :stream |
+				           (random next * 1000000000000) truncated
+					           printOn: stream
+					           base: 10
+					           nDigits: 12 ]).
+			([ tmpRef fileSystem createDirectory: tmpRef ]
+				 on: Exception
+				 do: [ :ex | ex return: nil ]) ifNotNil: [
+				^ [ aBlock cull: tmpRef ] ensure: [
+					  [ tmpRef deleteAll ]
+						  on: Exception
+						  do: [ :ex |  ] ] ] ] ].
+	^ nil
+]
+
+{ #category : 'updating' }
+HiDeStorage >> updateChronicle [
+
+	
 ]

@@ -29,7 +29,7 @@ THiDePersistency >> initialize [
 	timestamp := self defaultTimestamp
 ]
 
-{ #category : 'storage' }
+{ #category : 'operations' }
 THiDePersistency >> load [
 
 	self
@@ -74,13 +74,13 @@ THiDePersistency >> metadata: aDictionary [
 		at: 'comment' ifPresent: [ :c | comment := c ]
 ]
 
-{ #category : 'accessing' }
+{ #category : 'accessing-files' }
 THiDePersistency >> metadataFileReference [
 
 	^ fileReference ifNotNil: [ fileReference / self metadataFilename ]
 ]
 
-{ #category : 'accessing' }
+{ #category : 'accessing-files' }
 THiDePersistency >> metadataFilename [
 
 	^ 'metadata.json'
@@ -92,7 +92,7 @@ THiDePersistency >> name [
 	^ name
 ]
 
-{ #category : 'storage' }
+{ #category : 'operations' }
 THiDePersistency >> save [
 
 	self

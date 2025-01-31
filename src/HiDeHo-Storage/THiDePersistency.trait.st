@@ -6,7 +6,6 @@ Trait {
 		'comment',
 		'fileReference'
 	],
-	#classTraits : '{} + TraitedClass',
 	#category : 'HiDeHo-Storage',
 	#package : 'HiDeHo-Storage'
 }

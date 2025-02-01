@@ -14,6 +14,34 @@ THiDePersistency >> hideDefaultTimestamp [
 	^ self subclassResponsibility
 ]
 
+{ #category : 'hideho-accessing' }
+THiDePersistency >> hideIdentity [
+
+	^ self hideMetadataAt: self hideIdentityKey
+]
+
+{ #category : 'hideho-accessing' }
+THiDePersistency >> hideIdentity: aString [
+
+	^ self hideMetadataAt: self hideIdentityKey put: aString
+]
+
+{ #category : 'hideho-accessing' }
+THiDePersistency >> hideIdentityIfAbsentPut: identityBlock [
+
+	^ self
+		  hideMetadataAt: self hideIdentityKey
+		  ifAbsentPut: [
+		  identityBlock cull:
+			  (self hideTimestamp ifNil: [ DateAndTime now ]) ]
+]
+
+{ #category : 'hideho-accessing' }
+THiDePersistency >> hideIdentityKey [
+
+	^ 'id'
+]
+
 { #category : 'hideho-operations' }
 THiDePersistency >> hideLoad: aFileReference [
 

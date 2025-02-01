@@ -38,6 +38,23 @@ HiDeStorageTest >> testChronicleMaxSize [
 ]
 
 { #category : 'tests' }
+HiDeStorageTest >> testEnsureIdentity [
+
+	| object id |
+	object := HiDePersistencyObjectForTesting new.
+	object hideMetadataAt: 'name' put: 'test name'.
+	self assert: object hideIdentity isNil.
+	id := storage ensureIdentity: object.
+	self assert: object hideIdentity equals: id.
+	self
+		assert:
+		(storage chronicleFileReferenceDo: [ :ref | ref ]) childNames
+		equals: { id }.
+	self assert: (storage ensureIdentity: object) equals: id.
+	self assert: object hideIdentity equals: id
+]
+
+{ #category : 'tests' }
 HiDeStorageTest >> testLoadSettings [
 
 	storage chronicleMaxDays: 10.

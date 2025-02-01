@@ -31,7 +31,7 @@ HiDeStorage >> basepathDo: aBlock [
 
 	^ basepath ifNotNil: [ :ref |
 		  ref ensureCreateDirectory.
-		  aBlock cull: ref ]
+		  aBlock cull: ref copy ]
 ]
 
 { #category : 'accessing-files' }
@@ -46,7 +46,7 @@ HiDeStorage >> chronicleFileReferenceDo: aBlock [
 	^ self basepathDo: [ :ref |
 		  aBlock cull: ((ref / self chronicleDirname)
 				   ensureCreateDirectory;
-				   yourself) ]
+				   copy) ]
 ]
 
 { #category : 'accessing' }
@@ -74,6 +74,41 @@ HiDeStorage >> chronicleMaxSize: anInteger [
 ]
 
 { #category : 'operations' }
+HiDeStorage >> ensureIdentity: aHiDePersistency [
+
+	aHiDePersistency hideIdentity ifNotNil: [ :id | ^ id ] ifNil: [
+		| timestamp random prefix |
+		timestamp := aHiDePersistency hideTimestamp ifNil: [
+			             DateAndTime now ].
+		random := Random new.
+		prefix := String streamContents: [ :stream |
+			          timestamp year printOn: stream base: 10 nDigits: 4.
+			          timestamp month printOn: stream base: 10 nDigits: 2.
+			          timestamp dayOfMonth printOn: stream base: 10 nDigits: 2.
+			          stream nextPut: $-.
+			          timestamp hour printOn: stream base: 10 nDigits: 2.
+			          timestamp minute printOn: stream base: 10 nDigits: 2.
+			          timestamp second printOn: stream base: 10 nDigits: 2.
+			          stream nextPut: $-.
+			          timestamp nanoSecond printOn: stream base: 10 nDigits: 9.
+			          stream nextPut: $- ].
+		self chronicleFileReferenceDo: [ :chronicleDir |
+			100 timesRepeat: [
+				| ref |
+				ref := chronicleDir
+				       / (prefix , (String streamContents: [ :stream |
+						         12 timesRepeat: [
+							         stream nextPut:
+								         ('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ' at:
+									          (random nextInteger: 32)) ] ])).
+				([ ref fileSystem createDirectory: ref ]
+					 on: Exception
+					 do: [ :ex | ex return: nil ]) ifNotNil: [
+					^ aHiDePersistency hideIdentity: ref basename ] ] ] ].
+	^ nil
+]
+
+{ #category : 'operations' }
 HiDeStorage >> loadSettings [
 
 	self settingsFileReferenceDo: [ :ref |
@@ -91,6 +126,19 @@ HiDeStorage >> saveSettings [
 			ensureDelete;
 			writeStreamDo: [ :stream |
 				STONJSON put: self settings onStreamPretty: stream ] ]
+]
+
+{ #category : 'operations' }
+HiDeStorage >> saveToChronicle: aHiDePersistency [
+
+	self
+		ensureIdentity: aHiDePersistency
+		chronicleReferenceDo: [ :chronicleReference |
+			self temporaryDirectoryReferenceDo: [ :temporaryReference |
+				aHiDePersistency hideSave: temporaryReference.
+				temporaryReference fileSystem
+					rename: temporaryReference resolve
+					to: chronicleReference resolve ] ]
 ]
 
 { #category : 'accessing' }
@@ -118,7 +166,8 @@ HiDeStorage >> settings: aDictionary [
 { #category : 'accessing-files' }
 HiDeStorage >> settingsFileReferenceDo: aBlock [
 
-	^ self basepathDo: [ :ref | aBlock cull: ref / self settingsFilename ]
+	^ self basepathDo: [ :ref |
+		  aBlock cull: (ref / self settingsFilename) copy ]
 ]
 
 { #category : 'accessing-files' }
@@ -147,7 +196,7 @@ HiDeStorage >> temporaryDirectoryReferenceDo: aBlock [
 			([ tmpRef fileSystem createDirectory: tmpRef ]
 				 on: Exception
 				 do: [ :ex | ex return: nil ]) ifNotNil: [
-				^ [ aBlock cull: tmpRef ] ensure: [
+				^ [ aBlock value: tmpRef copy ] ensure: [
 					  [ tmpRef deleteAll ]
 						  on: Exception
 						  do: [ :ex |  ] ] ] ] ].

@@ -11,52 +11,23 @@ Class {
 	#tag : 'Tests'
 }
 
-{ #category : 'comparing' }
-HiDePersistencyObjectForTesting >> = anObject [
-
-	^ self class = anObject class and: [
-		  name = anObject name and: [
-			  timestamp = anObject timestamp and: [
-				  comment = anObject comment and: [ x = anObject x ] ] ] ]
-]
-
-{ #category : 'defaults' }
-HiDePersistencyObjectForTesting >> defaultTimestamp [
+{ #category : 'hideho-initialization' }
+HiDePersistencyObjectForTesting >> hideDefaultTimestamp [
 
 	^ DateAndTime now
 ]
 
-{ #category : 'comparing' }
-HiDePersistencyObjectForTesting >> hash [
+{ #category : 'hideho-operations' }
+HiDePersistencyObjectForTesting >> hideLoadPayload: aFileReference [
 
-	^ self class hash bitXor: (name hash bitXor:
-			   (timestamp hash bitXor: (comment hash bitXor: x hash)))
-]
-
-{ #category : 'storage' }
-HiDePersistencyObjectForTesting >> loadPayload [
-
-	x := self payloadFileReference readStreamDo: [ :stream |
+	x := aFileReference / 'x.json' readStreamDo: [ :stream |
 		     STONJSON fromStream: stream ]
 ]
 
-{ #category : 'accessing-files' }
-HiDePersistencyObjectForTesting >> payloadFileReference [
+{ #category : 'hideho-operations' }
+HiDePersistencyObjectForTesting >> hideSavePayload: aFileReference [
 
-	^ persistencyFileReference ifNotNil: [ persistencyFileReference / self payloadFilename ]
-]
-
-{ #category : 'accessing-files' }
-HiDePersistencyObjectForTesting >> payloadFilename [
-
-	^ 'x.json'
-]
-
-{ #category : 'storage' }
-HiDePersistencyObjectForTesting >> savePayload [
-
-	self payloadFileReference
-		ensureDelete;
+	(aFileReference / 'x.json') ensureDelete;
 		writeStreamDo: [ :stream | STONJSON put: x onStreamPretty: stream ]
 ]
 

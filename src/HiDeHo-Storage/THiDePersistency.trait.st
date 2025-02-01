@@ -1,154 +1,127 @@
 Trait {
 	#name : 'THiDePersistency',
 	#instVars : [
-		'name',
-		'timestamp',
-		'comment',
-		'persistencyFileReference'
+		'hideMetadata'
 	],
 	#category : 'HiDeHo-Storage-Core',
 	#package : 'HiDeHo-Storage',
 	#tag : 'Core'
 }
 
-{ #category : 'accessing' }
-THiDePersistency >> comment [
-
-	^ comment
-]
-
-{ #category : 'accessing' }
-THiDePersistency >> comment: aString [
-
-	comment := aString
-]
-
-{ #category : 'defaults' }
-THiDePersistency >> defaultTimestamp [
+{ #category : 'hideho-initialization' }
+THiDePersistency >> hideDefaultTimestamp [
 
 	^ self subclassResponsibility
+]
+
+{ #category : 'hideho-operations' }
+THiDePersistency >> hideLoad: aFileReference [
+
+	self
+		hideLoadMetadata: aFileReference;
+		hideLoadPayload: aFileReference
+]
+
+{ #category : 'hideho-operations' }
+THiDePersistency >> hideLoadMetadata: aFileReference [
+
+	aFileReference / self hideMetadataFilename ifExists: [ :ref |
+		([ ref readStreamDo: [ :stream | STONJSON fromStream: stream ] ]
+			 on: Exception
+			 do: [ :ex | ex return: nil ]) ifNotNil: [ :json |
+			hideMetadata := json ] ]
+]
+
+{ #category : 'hideho-operations' }
+THiDePersistency >> hideLoadPayload: aFileReference [
+
+	^ self subclassResponsibility
+]
+
+{ #category : 'hideho-accessing' }
+THiDePersistency >> hideMetadataAt: aString [
+
+	^ hideMetadata at: aString ifAbsent: [ nil ]
+]
+
+{ #category : 'hideho-accessing' }
+THiDePersistency >> hideMetadataAt: aString ifAbsent: errorBlock [
+
+	^ hideMetadata at: aString ifAbsent: errorBlock
+]
+
+{ #category : 'hideho-accessing' }
+THiDePersistency >> hideMetadataAt: aString ifAbsentPut: errorBlock [
+
+	^ hideMetadata at: aString ifAbsentPut: errorBlock
+]
+
+{ #category : 'hideho-accessing' }
+THiDePersistency >> hideMetadataAt: aString put: errorBlock [
+
+	^ hideMetadata at: aString put: errorBlock
+]
+
+{ #category : 'hideho-files' }
+THiDePersistency >> hideMetadataFilename [
+
+	^ 'metadata.json'
+]
+
+{ #category : 'hideho-operations' }
+THiDePersistency >> hideSave: aFileReference [
+
+	self
+		hideSaveMetadata: aFileReference;
+		hideSavePayload: aFileReference
+]
+
+{ #category : 'hideho-operations' }
+THiDePersistency >> hideSaveMetadata: aFileReference [
+
+	aFileReference isDirectory ifTrue: [
+		(aFileReference / self hideMetadataFilename)
+			ensureDelete;
+			writeStreamDo: [ :stream |
+				STONJSON put: hideMetadata onStream: stream ] ]
+]
+
+{ #category : 'hideho-operations' }
+THiDePersistency >> hideSavePayload: aFileReference [
+
+	^ self subclassResponsibility
+]
+
+{ #category : 'hideho-accessing' }
+THiDePersistency >> hideTimestamp [
+
+	^ (self hideMetadataAt: self hideTimestampKey) asDateAndTime
+]
+
+{ #category : 'hideho-accessing' }
+THiDePersistency >> hideTimestamp: aDateTime [
+
+	self hideMetadataAt: self hideTimestampKey put: aDateTime asString
+]
+
+{ #category : 'hideho-accessing' }
+THiDePersistency >> hideTimestampKey [
+
+	^ 'timestamp'
 ]
 
 { #category : 'initialization' }
 THiDePersistency >> initialize [
 
 	super initialize.
-	timestamp := self defaultTimestamp
+	self initializeHideMetadata
 ]
 
-{ #category : 'operations' }
-THiDePersistency >> load [
+{ #category : 'hideho-initialization' }
+THiDePersistency >> initializeHideMetadata [
 
-	self
-		loadMetadata;
-		loadPayload
-]
-
-{ #category : 'storage' }
-THiDePersistency >> loadMetadata [
-
-	self metadataFileReference ifNotNil: [ :ref |
-		ref ifExists: [
-			([ ref readStreamDo: [ :stream | STONJSON fromStream: stream ] ]
-				 on: Exception
-				 do: [ :ex | ex return: nil ]) ifNotNil: [ :json |
-				self metadata: json ] ] ]
-]
-
-{ #category : 'storage' }
-THiDePersistency >> loadPayload [
-
-	^ self subclassResponsibility
-]
-
-{ #category : 'accessing' }
-THiDePersistency >> metadata [
-
-	| json |
-	json := OrderedDictionary new.
-	name ifNotNil: [ json at: 'name' put: name ].
-	timestamp ifNotNil: [ json at: 'timestamp' put: timestamp asString ].
-	comment ifNotNil: [ json at: 'comment' put: comment ].
-	^ json
-]
-
-{ #category : 'accessing' }
-THiDePersistency >> metadata: aDictionary [
-
-	aDictionary
-		at: 'name' ifPresent: [ :n | name := n ];
-		at: 'timestamp' ifPresent: [ :t | timestamp := t asDateAndTime ];
-		at: 'comment' ifPresent: [ :c | comment := c ]
-]
-
-{ #category : 'accessing-files' }
-THiDePersistency >> metadataFileReference [
-
-	^ persistencyFileReference ifNotNil: [ persistencyFileReference / self metadataFilename ]
-]
-
-{ #category : 'accessing-files' }
-THiDePersistency >> metadataFilename [
-
-	^ 'metadata.json'
-]
-
-{ #category : 'accessing' }
-THiDePersistency >> name [
-
-	^ name
-]
-
-{ #category : 'accessing' }
-THiDePersistency >> name: aString [
-
-	name := aString
-]
-
-{ #category : 'accessing-files' }
-THiDePersistency >> persistencyFileReference [
-
-	^ persistencyFileReference
-]
-
-{ #category : 'accessing-files' }
-THiDePersistency >> persistencyFileReference: aFileReference [
-
-	persistencyFileReference := aFileReference
-]
-
-{ #category : 'operations' }
-THiDePersistency >> save [
-
-	self
-		saveMetadata;
-		savePayload
-]
-
-{ #category : 'storage' }
-THiDePersistency >> saveMetadata [
-
-	self metadataFileReference ifNotNil: [ :ref |
-		ref parent isDirectory ifTrue: [
-			ref ensureDelete.
-			ref writeStreamDo: [ :stream |
-				STONJSON put: self metadata onStream: stream ] ] ]
-]
-
-{ #category : 'storage' }
-THiDePersistency >> savePayload [
-
-	^ self subclassResponsibility
-]
-
-{ #category : 'accessing' }
-THiDePersistency >> timestamp [
-
-	^ timestamp
-]
-
-{ #category : 'accessing' }
-THiDePersistency >> timestamp: aDateAndTime [
-
-	timestamp := aDateAndTime
+	hideMetadata := OrderedDictionary new
+		                  at: self hideTimestampKey
+		                  put: self hideDefaultTimestamp asString;
+		                  yourself
 ]

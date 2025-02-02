@@ -49,6 +49,14 @@ HiDeStorage >> chronicleFileReferenceDo: aBlock [
 				   copy) ]
 ]
 
+{ #category : 'accessing-files' }
+HiDeStorage >> chronicleFileReferenceFor: aHiDePersistency do: aBlock [
+
+	self chronicleFileReferenceDo: [ :baseDir |
+		^ aBlock cull: baseDir / (self ensureIdentity: aHiDePersistency) ].
+	^ nil
+]
+
 { #category : 'accessing' }
 HiDeStorage >> chronicleMaxDays [
 
@@ -132,13 +140,15 @@ HiDeStorage >> saveSettings [
 HiDeStorage >> saveToChronicle: aHiDePersistency [
 
 	self
-		ensureIdentity: aHiDePersistency
-		chronicleReferenceDo: [ :chronicleReference |
-			self temporaryDirectoryReferenceDo: [ :temporaryReference |
-				aHiDePersistency hideSave: temporaryReference.
-				temporaryReference fileSystem
-					rename: temporaryReference resolve
-					to: chronicleReference resolve ] ]
+		ensureIdentity: aHiDePersistency;
+		chronicleFileReferenceFor: aHiDePersistency do: [ :ref |
+			| backupRef |
+			backupRef := ref copy renameTo:
+					             (ref withExtension: 'moving') basename.
+			aHiDePersistency hideSave: ref ensureCreateDirectory.
+			backupRef ensureDeleteAll.
+			^ ref ].
+	^ nil
 ]
 
 { #category : 'accessing' }

@@ -81,6 +81,18 @@ HiDeStorageTest >> testSaveSettings [
 ]
 
 { #category : 'tests' }
+HiDeStorageTest >> testSaveToChronicle [
+
+	| object ref |
+	object := HiDePersistencyObjectForTesting new.
+	object hideMetadataAt: 'name' put: 'test name'.
+	ref := storage saveToChronicle: object.
+	self assert: ref basename equals: object hideIdentity.
+	self assert: (ref / 'metadata.json') isFile.
+	self assert: (ref / 'x.json') isFile
+]
+
+{ #category : 'tests' }
 HiDeStorageTest >> testTemporaryDirectoryReferenceDo [
 
 	| x y tmpRef |

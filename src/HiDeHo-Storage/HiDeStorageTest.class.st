@@ -55,7 +55,7 @@ HiDeStorageTest >> testEnsureIdentity [
 ]
 
 { #category : 'tests' }
-HiDeStorageTest >> testIdentitiesInChronicleDo [
+HiDeStorageTest >> testIdentitiesInChronicle [
 
 	| ids |
 	ids := Set new.
@@ -67,11 +67,7 @@ HiDeStorageTest >> testIdentitiesInChronicleDo [
 		storage saveToChronicle: object.
 		ids add: object hideIdentity ].
 	(root / 'chronicle' / 'working.in.progress') ensureCreateDirectory.
-	self
-		assert: (Array streamContents: [ :stream |
-				 storage identitiesInChronicleDo: [ :id | stream nextPut: id ] ])
-				asSet
-		equals: ids
+	self assert: storage identitiesInChronicle asSet equals: ids
 ]
 
 { #category : 'tests' }

@@ -124,6 +124,15 @@ HiDeStorage >> ensureIdentity: aHiDePersistency [
 ]
 
 { #category : 'operations' }
+HiDeStorage >> identitiesInChronicle [
+
+	self chronicleFileReferenceDo: [ :chronicle |
+		^ chronicle directoryNames select: [ :name |
+			  (name includes: $.) not ] ].
+	^ {  }
+]
+
+{ #category : 'operations' }
 HiDeStorage >> identitiesInChronicleDo: aBlock [
 
 	self chronicleFileReferenceDo: [ :chronicle |

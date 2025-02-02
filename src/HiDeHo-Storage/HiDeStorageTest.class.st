@@ -55,6 +55,25 @@ HiDeStorageTest >> testEnsureIdentity [
 ]
 
 { #category : 'tests' }
+HiDeStorageTest >> testIdentitiesInChronicleDo [
+
+	| ids |
+	ids := Set new.
+	1 to: 10 do: [ :x |
+		| object |
+		object := HiDePersistencyObjectForTesting new.
+		object hideMetadataAt: 'name' put: 'test name ' , x printString.
+		object x: x.
+		storage saveToChronicle: object.
+		ids add: object hideIdentity ].
+	self
+		assert: (Array streamContents: [ :stream |
+				 storage identitiesInChronicleDo: [ :id | stream nextPut: id ] ])
+				asSet
+		equals: ids
+]
+
+{ #category : 'tests' }
 HiDeStorageTest >> testLoadFromChronicle [
 
 	| object |

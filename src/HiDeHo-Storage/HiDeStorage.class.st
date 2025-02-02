@@ -123,6 +123,15 @@ HiDeStorage >> ensureIdentity: aHiDePersistency [
 	^ nil
 ]
 
+{ #category : 'operations' }
+HiDeStorage >> identitiesInChronicleDo: aBlock [
+
+	self chronicleFileReferenceDo: [ :chronicle |
+		chronicle directoryNames
+			select: [ :name | (name includes: $.) not ]
+			thenDo: aBlock ]
+]
+
 { #category : 'initialization' }
 HiDeStorage >> initialize [
 

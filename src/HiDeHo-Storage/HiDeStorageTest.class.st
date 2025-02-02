@@ -55,6 +55,24 @@ HiDeStorageTest >> testEnsureIdentity [
 ]
 
 { #category : 'tests' }
+HiDeStorageTest >> testLoadFromChronicle [
+
+	| object |
+	object := HiDePersistencyObjectForTesting new.
+	object hideMetadataAt: 'name' put: 'test name'.
+	object x: 10.
+	storage saveToChronicle: object.
+	object := HiDePersistencyObjectForTesting new
+		          hideIdentity: object hideIdentity;
+		          yourself.
+	self assert: object x isNil.
+	self assert: (object hideMetadataAt: 'name') isNil.
+	storage loadFromChronicle: object.
+	self assert: object x equals: 10.
+	self assert: (object hideMetadataAt: 'name') equals: 'test name'
+]
+
+{ #category : 'tests' }
 HiDeStorageTest >> testLoadSettings [
 
 	storage chronicleMaxDays: 10.

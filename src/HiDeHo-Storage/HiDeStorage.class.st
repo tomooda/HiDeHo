@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'basepath',
 		'chronicleMaxSize',
-		'chronicleMaxDays'
+		'chronicleMaxDays',
+		'semaphore'
 	],
 	#category : 'HiDeHo-Storage-Core',
 	#package : 'HiDeHo-Storage',
@@ -81,6 +82,12 @@ HiDeStorage >> chronicleMaxSize: anInteger [
 	chronicleMaxSize := anInteger
 ]
 
+{ #category : 'controlling' }
+HiDeStorage >> critical: aBlock [
+
+	^ semaphore critical: aBlock
+]
+
 { #category : 'operations' }
 HiDeStorage >> ensureIdentity: aHiDePersistency [
 
@@ -113,6 +120,23 @@ HiDeStorage >> ensureIdentity: aHiDePersistency [
 					 on: Exception
 					 do: [ :ex | ex return: nil ]) ifNotNil: [
 					^ aHiDePersistency hideIdentity: ref basename ] ] ] ].
+	^ nil
+]
+
+{ #category : 'initialization' }
+HiDeStorage >> initialize [
+
+	super initialize.
+	semaphore := Semaphore forMutualExclusion
+]
+
+{ #category : 'operations' }
+HiDeStorage >> loadFromChronicle: aHiDePersistency [
+
+	self chronicleFileReferenceFor: aHiDePersistency do: [ :ref |
+		^ aHiDePersistency
+			  hideLoad: ref;
+			  yourself ].
 	^ nil
 ]
 

@@ -66,6 +66,7 @@ HiDeStorageTest >> testIdentitiesInChronicleDo [
 		object x: x.
 		storage saveToChronicle: object.
 		ids add: object hideIdentity ].
+	(root / 'chronicle' / 'working.in.progress') ensureCreateDirectory.
 	self
 		assert: (Array streamContents: [ :stream |
 				 storage identitiesInChronicleDo: [ :id | stream nextPut: id ] ])

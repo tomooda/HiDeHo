@@ -5,9 +5,7 @@ Class {
 		'basepath',
 		'chronicleMaxSize',
 		'chronicleMaxDays',
-		'semaphore',
-		'objectCreationBlock',
-		'objectDeploymentBlock'
+		'chronicle'
 	],
 	#category : 'HiDeHo-Storage-Core',
 	#package : 'HiDeHo-Storage',
@@ -37,6 +35,34 @@ HiDeStorage >> basepathDo: aBlock [
 		  aBlock cull: ref copy ]
 ]
 
+{ #category : 'operations' }
+HiDeStorage >> chronicle [
+
+	^ chronicle values asSortedCollection: [ :older :newer |
+		  older hideMetadata timestamp <= newer hideMetadata timestamp ]
+]
+
+{ #category : 'operations' }
+HiDeStorage >> chronicleAdd: aHiDePersistency [
+
+	self chronicleSave: aHiDePersistency.
+	chronicle
+		at: aHiDePersistency hideMetadata identity
+		put: aHiDePersistency
+]
+
+{ #category : 'operations' }
+HiDeStorage >> chronicleAt: aString [
+
+	^ self chronicleAt: aString ifAbsent: [ nil ]
+]
+
+{ #category : 'operations' }
+HiDeStorage >> chronicleAt: aString ifAbsent: errorBlock [
+
+	^ chronicle at: aString ifAbsent: errorBlock
+]
+
 { #category : 'accessing-files' }
 HiDeStorage >> chronicleDirname [
 
@@ -53,10 +79,22 @@ HiDeStorage >> chronicleFileReferenceDo: aBlock [
 ]
 
 { #category : 'accessing-files' }
-HiDeStorage >> chronicleFileReferenceFor: aHiDePersistency do: aBlock [
+HiDeStorage >> chronicleFileReferenceFor: aHiDeMetadata do: aBlock [
 
 	self chronicleFileReferenceDo: [ :baseDir |
-		^ aBlock cull: baseDir / (self ensureIdentity: aHiDePersistency) ].
+		^ aBlock cull: baseDir / (self ensureIdentity: aHiDeMetadata) ].
+	^ nil
+]
+
+{ #category : 'operations-chronicle' }
+HiDeStorage >> chronicleLoad: aHiDePersistency [
+
+	self
+		chronicleFileReferenceFor: aHiDePersistency hideMetadata
+		do: [ :ref |
+			aHiDePersistency hideMetadata load: ref.
+			aHiDePersistency hideLoad: ref storage: self.
+			^ aHiDePersistency ].
 	^ nil
 ]
 
@@ -84,31 +122,47 @@ HiDeStorage >> chronicleMaxSize: anInteger [
 	chronicleMaxSize := anInteger
 ]
 
-{ #category : 'controlling' }
-HiDeStorage >> critical: aBlock [
+{ #category : 'operations-chronicle' }
+HiDeStorage >> chronicleMetadataDo: aBlock [
 
-	^ semaphore critical: aBlock
+	self chronicleFileReferenceDo: [ :chronicleRef |
+		chronicleRef directories
+			select: [ :ref | (ref basename includes: $.) not ]
+			thenDo: [ :ref | (HiDeMetadata load: ref) ifNotNil: aBlock ] ]
 ]
 
-{ #category : 'initialization' }
-HiDeStorage >> defaultObjectCreationBlock [
+{ #category : 'operations-chronicle' }
+HiDeStorage >> chronicleSave: aHiDePersistency [
 
-	^ self subclassResponsibility
+	self
+		ensureIdentity: aHiDePersistency hideMetadata;
+		chronicleFileReferenceFor: aHiDePersistency hideMetadata
+		do: [ :ref |
+			| backupRef |
+			backupRef := ref copy renameTo:
+					             (ref withExtension: 'moving') basename.
+			ref ensureCreateDirectory.
+			aHiDePersistency hideMetadata save: ref.
+			aHiDePersistency hideSave: ref storage: self.
+			backupRef ensureDeleteAll.
+			^ ref ].
+	^ nil
 ]
 
-{ #category : 'initialization' }
-HiDeStorage >> defaultObjectDeploymentBlock [
+{ #category : 'operations-chronicle' }
+HiDeStorage >> createPayloadFor: aHiDeMetadata [
 
-	^ self subclassResponsibility
+	^ (self payloadClassFor: aHiDeMetadata) new
+		  hideMetadata: aHiDeMetadata;
+		  yourself
 ]
 
-{ #category : 'operations-metadata' }
-HiDeStorage >> ensureIdentity: aHiDePersistency [
+{ #category : 'operations-chronicle' }
+HiDeStorage >> ensureIdentity: aHiDeMetadata [
 
-	aHiDePersistency hideIdentity ifNotNil: [ :id | ^ id ] ifNil: [
+	aHiDeMetadata identity ifNotNil: [ :id | ^ id ] ifNil: [
 		| timestamp random prefix |
-		timestamp := aHiDePersistency hideTimestamp ifNil: [
-			             DateAndTime now ].
+		timestamp := aHiDeMetadata timestamp ifNil: [ DateAndTime now ].
 		random := Random new.
 		prefix := String streamContents: [ :stream |
 			          timestamp year printOn: stream base: 10 nDigits: 4.
@@ -133,52 +187,29 @@ HiDeStorage >> ensureIdentity: aHiDePersistency [
 				([ ref fileSystem createDirectory: ref ]
 					 on: Exception
 					 do: [ :ex | ex return: nil ]) ifNotNil: [
-					^ aHiDePersistency hideIdentity: ref basename ] ] ] ].
+					aHiDeMetadata identity: ref basename.
+					^ aHiDeMetadata identity ] ] ] ].
 	^ nil
-]
-
-{ #category : 'operations' }
-HiDeStorage >> identitiesInChronicle [
-
-	self chronicleFileReferenceDo: [ :chronicle |
-		^ chronicle directoryNames select: [ :name |
-			  (name includes: $.) not ] ].
-	^ {  }
-]
-
-{ #category : 'accessing-metadata' }
-HiDeStorage >> identityKey [
-
-	^ 'id'
 ]
 
 { #category : 'initialization' }
 HiDeStorage >> initialize [
 
 	super initialize.
-	objectCreationBlock := self defaultObjectCreationBlock.
-	objectDeploymentBlock := self defaultObjectDeploymentBlock.
-	semaphore := Semaphore forMutualExclusion
+	chronicle := Dictionary new
 ]
 
 { #category : 'operations' }
-HiDeStorage >> loadFromChronicle: aHiDePersistency [
+HiDeStorage >> loadChronicle [
 
-	self chronicleFileReferenceFor: aHiDePersistency do: [ :ref |
-		^ aHiDePersistency
-			  hideLoad: ref;
-			  yourself ].
-	^ nil
-]
-
-{ #category : 'operations-metadata' }
-HiDeStorage >> loadMetadata: aFileReference [
-
-	aFileReference / self metadataFilename ifExists: [ :ref |
-		^ [ ref readStreamDo: [ :stream | STONJSON fromStream: stream ] ]
-			  on: Exception
-			  do: [ :ex | ex return: nil ] ].
-	^ nil
+	chronicle removeAll.
+	self chronicleMetadataDo: [ :metadata |
+		chronicle
+			at: metadata identity
+			ifAbsentPut: [ self createPayloadFor: metadata ] ].
+	chronicle valuesDo: [ :payload |
+		self chronicleLoad: payload.
+		chronicle at: payload metadata identity put: payload ]
 ]
 
 { #category : 'operations-settings' }
@@ -194,23 +225,13 @@ HiDeStorage >> loadSettings [
 { #category : 'class access' }
 HiDeStorage >> metadataClass [
 
-	^ OrderedDictionary
+	^ HiDeMetadata
 ]
 
-{ #category : 'accessing-files' }
-HiDeStorage >> metadataFilename [
+{ #category : 'class access' }
+HiDeStorage >> payloadClassFor: aHiDeMetadata [
 
-	^ 'metadata.json'
-]
-
-{ #category : 'operations-metadata' }
-HiDeStorage >> saveMetadata: aDictionary at: aFileReference [
-
-	aFileReference isDirectory ifTrue: [
-		(aFileReference / self metadataFilename)
-			ensureDelete;
-			writeStreamDo: [ :stream |
-				STONJSON put: aDictionary onStream: stream ] ]
+	^ self subclassResponsibility
 ]
 
 { #category : 'operations-settings' }
@@ -221,23 +242,6 @@ HiDeStorage >> saveSettings [
 			ensureDelete;
 			writeStreamDo: [ :stream |
 				STONJSON put: self settings onStreamPretty: stream ] ]
-]
-
-{ #category : 'operations' }
-HiDeStorage >> saveToChronicle: aHiDePersistency [
-
-	self
-		ensureIdentity: aHiDePersistency;
-		chronicleFileReferenceFor: aHiDePersistency do: [ :ref |
-			| backupRef |
-			backupRef := ref copy renameTo:
-					             (ref withExtension: 'moving') basename.
-			ref ensureCreateDirectory.
-			self saveMetadata: aHiDePersistency hideMetadata at: ref.
-			aHiDePersistency hideSave: ref ensureCreateDirectory.
-			backupRef ensureDeleteAll.
-			^ ref ].
-	^ nil
 ]
 
 { #category : 'accessing' }
@@ -300,12 +304,6 @@ HiDeStorage >> temporaryDirectoryReferenceDo: aBlock [
 						  on: Exception
 						  do: [ :ex |  ] ] ] ] ].
 	^ nil
-]
-
-{ #category : 'accessing-metadata' }
-HiDeStorage >> timestampKey [
-
-	^ 'timestamp'
 ]
 
 { #category : 'updating' }

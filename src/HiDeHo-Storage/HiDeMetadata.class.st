@@ -15,6 +15,12 @@ HiDeMetadata class >> load: aFileReference [
 ]
 
 { #category : 'accessing' }
+HiDeMetadata class >> metadataFilename [
+
+	^ 'metadata.json'
+]
+
+{ #category : 'accessing' }
 HiDeMetadata >> identity [
 
 	^ self at: self identityKey ifAbsent: [ nil ]
@@ -38,8 +44,21 @@ HiDeMetadata >> identityKey [
 HiDeMetadata >> initialize [
 
 	super initialize.
+	self installDefaults
+]
+
+{ #category : 'initialization' }
+HiDeMetadata >> initialize: aCapacity [
+
+	super initialize: aCapacity.
+	self installDefaults
+]
+
+{ #category : 'initialization' }
+HiDeMetadata >> installDefaults [
+
 	self at: self identityKey put: nil.
-	self at: self timestampKey put: DateAndTime now
+	self at: self timestampKey put: DateAndTime now asString
 ]
 
 { #category : 'storage' }
@@ -56,7 +75,7 @@ HiDeMetadata >> load: aFileReference [
 { #category : 'accessing' }
 HiDeMetadata >> metadataFilename [
 
-	^ 'metadata.json'
+	^ self class metadataFilename
 ]
 
 { #category : 'storage' }
@@ -65,7 +84,8 @@ HiDeMetadata >> save: aFileReference [
 	aFileReference isDirectory ifTrue: [
 		(aFileReference / self metadataFilename)
 			ensureDelete;
-			writeStreamDo: [ :stream | STONJSON put: self onStream: stream ] ]
+			writeStreamDo: [ :stream |
+				STONJSON put: self asOrderedDictionary onStream: stream ] ]
 ]
 
 { #category : 'accessing' }

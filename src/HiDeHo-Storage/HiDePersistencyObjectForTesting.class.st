@@ -11,23 +11,18 @@ Class {
 	#tag : 'Tests'
 }
 
-{ #category : 'hideho-initialization' }
-HiDePersistencyObjectForTesting >> hideDefaultTimestamp [
-
-	^ DateAndTime now
-]
-
 { #category : 'hideho-operations' }
-HiDePersistencyObjectForTesting >> hideLoadPayload: aFileReference [
+HiDePersistencyObjectForTesting >> hideLoad: aFileReference storage: aHiDeStorage [
 
 	x := aFileReference / 'x.json' readStreamDo: [ :stream |
 		     STONJSON fromStream: stream ]
 ]
 
 { #category : 'hideho-operations' }
-HiDePersistencyObjectForTesting >> hideSavePayload: aFileReference [
+HiDePersistencyObjectForTesting >> hideSave: aFileReference storage: aHiDeStorage [
 
-	(aFileReference / 'x.json') ensureDelete;
+	(aFileReference / 'x.json')
+		ensureDelete;
 		writeStreamDo: [ :stream | STONJSON put: x onStreamPretty: stream ]
 ]
 

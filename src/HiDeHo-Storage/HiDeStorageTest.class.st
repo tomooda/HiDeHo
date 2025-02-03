@@ -16,7 +16,27 @@ HiDeStorageTest >> setUp [
 
 	filesystem := FileSystem memory.
 	root := filesystem root.
-	storage := HiDeStorage new basepath: root
+	storage := HiDeStorageForTesting new
+		           basepath: root;
+		           yourself
+]
+
+{ #category : 'tests' }
+HiDeStorageTest >> testChronicleLoad [
+
+	| object id |
+	object := HiDePersistencyObjectForTesting new.
+	object hideMetadata at: 'name' put: 'test name'.
+	object x: 10.
+	storage chronicleSave: object.
+	id := object hideMetadata identity.
+	object := HiDePersistencyObjectForTesting new.
+	object hideMetadata identity: id.
+	self assert: object x isNil.
+	self assert: (object hideMetadata at: 'name' ifAbsent: [ nil ]) isNil.
+	storage chronicleLoad: object.
+	self assert: object x equals: 10.
+	self assert: (object hideMetadata at: 'name') equals: 'test name'
 ]
 
 { #category : 'tests' }
@@ -38,54 +58,32 @@ HiDeStorageTest >> testChronicleMaxSize [
 ]
 
 { #category : 'tests' }
+HiDeStorageTest >> testChronicleSave [
+
+	| object ref |
+	object := HiDePersistencyObjectForTesting new.
+	object hideMetadata at: 'name' put: 'test name'.
+	ref := storage chronicleSave: object.
+	self assert: ref basename equals: object hideMetadata identity.
+	self assert: (ref / 'metadata.json') isFile.
+	self assert: (ref / 'x.json') isFile
+]
+
+{ #category : 'tests' }
 HiDeStorageTest >> testEnsureIdentity [
 
-	| object id |
-	object := HiDePersistencyObjectForTesting new.
-	object hideMetadataAt: 'name' put: 'test name'.
-	self assert: object hideIdentity isNil.
-	id := storage ensureIdentity: object.
-	self assert: object hideIdentity equals: id.
+	| metadata id |
+	metadata := HiDeMetadata new.
+	metadata at: 'name' put: 'test name'.
+	self assert: metadata identity isNil.
+	id := storage ensureIdentity: metadata.
+	self assert: metadata identity equals: id.
 	self
 		assert:
 		(storage chronicleFileReferenceDo: [ :ref | ref ]) childNames
 		equals: { id }.
-	self assert: (storage ensureIdentity: object) equals: id.
-	self assert: object hideIdentity equals: id
-]
-
-{ #category : 'tests' }
-HiDeStorageTest >> testIdentitiesInChronicle [
-
-	| ids |
-	ids := Set new.
-	1 to: 10 do: [ :x |
-		| object |
-		object := HiDePersistencyObjectForTesting new.
-		object hideMetadataAt: 'name' put: 'test name ' , x printString.
-		object x: x.
-		storage saveToChronicle: object.
-		ids add: object hideIdentity ].
-	(root / 'chronicle' / 'working.in.progress') ensureCreateDirectory.
-	self assert: storage identitiesInChronicle asSet equals: ids
-]
-
-{ #category : 'tests' }
-HiDeStorageTest >> testLoadFromChronicle [
-
-	| object |
-	object := HiDePersistencyObjectForTesting new.
-	object hideMetadataAt: 'name' put: 'test name'.
-	object x: 10.
-	storage saveToChronicle: object.
-	object := HiDePersistencyObjectForTesting new
-		          hideIdentity: object hideIdentity;
-		          yourself.
-	self assert: object x isNil.
-	self assert: (object hideMetadataAt: 'name') isNil.
-	storage loadFromChronicle: object.
-	self assert: object x equals: 10.
-	self assert: (object hideMetadataAt: 'name') equals: 'test name'
+	self assert: (storage ensureIdentity: metadata) equals: id.
+	self assert: metadata identity equals: id
 ]
 
 { #category : 'tests' }
@@ -112,18 +110,6 @@ HiDeStorageTest >> testSaveSettings [
 		        STONJSON fromStream: ref readStream ].
 	self assert: (json at: 'chronicle-max-days') equals: 10.
 	self assert: (json at: 'chronicle-max-size') equals: 1000
-]
-
-{ #category : 'tests' }
-HiDeStorageTest >> testSaveToChronicle [
-
-	| object ref |
-	object := HiDePersistencyObjectForTesting new.
-	object hideMetadataAt: 'name' put: 'test name'.
-	ref := storage saveToChronicle: object.
-	self assert: ref basename equals: object hideIdentity.
-	self assert: (ref / 'metadata.json') isFile.
-	self assert: (ref / 'x.json') isFile
 ]
 
 { #category : 'tests' }

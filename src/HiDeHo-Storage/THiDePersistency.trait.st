@@ -32,6 +32,12 @@ THiDePersistency >> hideSave: aFileReference storage: aHiDeStorage [
 	^ self subclassResponsibility
 ]
 
+{ #category : 'hideho-operations' }
+THiDePersistency >> hideUpdateMetadataStorage: aHiDeStorage [
+
+	^ self subclassResponsibility
+]
+
 { #category : 'initialization' }
 THiDePersistency >> initialize [
 
@@ -43,4 +49,11 @@ THiDePersistency >> initialize [
 THiDePersistency >> initializeHideMetadata [
 
 	hideMetadata := HiDeMetadata new
+]
+
+{ #category : 'copying' }
+THiDePersistency >> postCopy [
+
+	super postCopy.
+	hideMetadata := hideMetadata copy
 ]

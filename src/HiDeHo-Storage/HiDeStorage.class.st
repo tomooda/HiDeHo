@@ -142,6 +142,7 @@ HiDeStorage >> chronicleSave: aHiDePersistency [
 			backupRef := ref copy renameTo:
 					             (ref withExtension: 'moving') basename.
 			ref ensureCreateDirectory.
+			aHiDePersistency hideUpdateMetadataStorage: self.
 			aHiDePersistency hideMetadata save: ref.
 			aHiDePersistency hideSave: ref storage: self.
 			backupRef ensureDeleteAll.

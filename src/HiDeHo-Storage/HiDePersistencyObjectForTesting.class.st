@@ -26,6 +26,12 @@ HiDePersistencyObjectForTesting >> hideSave: aFileReference storage: aHiDeStorag
 		writeStreamDo: [ :stream | STONJSON put: x onStreamPretty: stream ]
 ]
 
+{ #category : 'hideho-operations' }
+HiDePersistencyObjectForTesting >> hideUpdateMetadataStorage: aHiDeStorage [
+
+	hideMetadata at: 'x' put: x asString
+]
+
 { #category : 'accessing' }
 HiDePersistencyObjectForTesting >> x [
 

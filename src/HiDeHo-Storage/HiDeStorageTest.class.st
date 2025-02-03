@@ -36,7 +36,8 @@ HiDeStorageTest >> testChronicleLoad [
 	self assert: (object hideMetadata at: 'name' ifAbsent: [ nil ]) isNil.
 	storage chronicleLoad: object.
 	self assert: object x equals: 10.
-	self assert: (object hideMetadata at: 'name') equals: 'test name'
+	self assert: (object hideMetadata at: 'name') equals: 'test name'.
+	self assert: (object hideMetadata at: 'x') equals: '10'
 ]
 
 { #category : 'tests' }
@@ -60,13 +61,19 @@ HiDeStorageTest >> testChronicleMaxSize [
 { #category : 'tests' }
 HiDeStorageTest >> testChronicleSave [
 
-	| object ref |
+	| object ref metadata |
 	object := HiDePersistencyObjectForTesting new.
 	object hideMetadata at: 'name' put: 'test name'.
 	ref := storage chronicleSave: object.
 	self assert: ref basename equals: object hideMetadata identity.
 	self assert: (ref / 'metadata.json') isFile.
-	self assert: (ref / 'x.json') isFile
+	self assert: (ref / 'x.json') isFile.
+	metadata := HiDeMetadata load: ref.
+	self assert: (metadata at: 'x') equals: 'nil'.
+	self assert: (metadata at: 'name') equals: 'test name'.
+	self
+		assert: (STONJSON fromStream: (ref / 'x.json') readStream)
+		equals: nil
 ]
 
 { #category : 'tests' }

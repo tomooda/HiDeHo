@@ -5,7 +5,9 @@ Class {
 		'basepath',
 		'chronicleMaxSize',
 		'chronicleMaxDays',
-		'semaphore'
+		'semaphore',
+		'objectCreationBlock',
+		'objectDeploymentBlock'
 	],
 	#category : 'HiDeHo-Storage-Core',
 	#package : 'HiDeHo-Storage',
@@ -88,7 +90,19 @@ HiDeStorage >> critical: aBlock [
 	^ semaphore critical: aBlock
 ]
 
-{ #category : 'operations' }
+{ #category : 'initialization' }
+HiDeStorage >> defaultObjectCreationBlock [
+
+	^ self subclassResponsibility
+]
+
+{ #category : 'initialization' }
+HiDeStorage >> defaultObjectDeploymentBlock [
+
+	^ self subclassResponsibility
+]
+
+{ #category : 'operations-metadata' }
 HiDeStorage >> ensureIdentity: aHiDePersistency [
 
 	aHiDePersistency hideIdentity ifNotNil: [ :id | ^ id ] ifNil: [
@@ -132,19 +146,18 @@ HiDeStorage >> identitiesInChronicle [
 	^ {  }
 ]
 
-{ #category : 'operations' }
-HiDeStorage >> identitiesInChronicleDo: aBlock [
+{ #category : 'accessing-metadata' }
+HiDeStorage >> identityKey [
 
-	self chronicleFileReferenceDo: [ :chronicle |
-		chronicle directoryNames
-			select: [ :name | (name includes: $.) not ]
-			thenDo: aBlock ]
+	^ 'id'
 ]
 
 { #category : 'initialization' }
 HiDeStorage >> initialize [
 
 	super initialize.
+	objectCreationBlock := self defaultObjectCreationBlock.
+	objectDeploymentBlock := self defaultObjectDeploymentBlock.
 	semaphore := Semaphore forMutualExclusion
 ]
 
@@ -158,7 +171,17 @@ HiDeStorage >> loadFromChronicle: aHiDePersistency [
 	^ nil
 ]
 
-{ #category : 'operations' }
+{ #category : 'operations-metadata' }
+HiDeStorage >> loadMetadata: aFileReference [
+
+	aFileReference / self metadataFilename ifExists: [ :ref |
+		^ [ ref readStreamDo: [ :stream | STONJSON fromStream: stream ] ]
+			  on: Exception
+			  do: [ :ex | ex return: nil ] ].
+	^ nil
+]
+
+{ #category : 'operations-settings' }
 HiDeStorage >> loadSettings [
 
 	self settingsFileReferenceDo: [ :ref |
@@ -168,7 +191,29 @@ HiDeStorage >> loadSettings [
 			self settings: json ] ]
 ]
 
-{ #category : 'operations' }
+{ #category : 'class access' }
+HiDeStorage >> metadataClass [
+
+	^ OrderedDictionary
+]
+
+{ #category : 'accessing-files' }
+HiDeStorage >> metadataFilename [
+
+	^ 'metadata.json'
+]
+
+{ #category : 'operations-metadata' }
+HiDeStorage >> saveMetadata: aDictionary at: aFileReference [
+
+	aFileReference isDirectory ifTrue: [
+		(aFileReference / self metadataFilename)
+			ensureDelete;
+			writeStreamDo: [ :stream |
+				STONJSON put: aDictionary onStream: stream ] ]
+]
+
+{ #category : 'operations-settings' }
 HiDeStorage >> saveSettings [
 
 	self settingsFileReferenceDo: [ :ref |
@@ -187,6 +232,8 @@ HiDeStorage >> saveToChronicle: aHiDePersistency [
 			| backupRef |
 			backupRef := ref copy renameTo:
 					             (ref withExtension: 'moving') basename.
+			ref ensureCreateDirectory.
+			self saveMetadata: aHiDePersistency hideMetadata at: ref.
 			aHiDePersistency hideSave: ref ensureCreateDirectory.
 			backupRef ensureDeleteAll.
 			^ ref ].
@@ -253,6 +300,12 @@ HiDeStorage >> temporaryDirectoryReferenceDo: aBlock [
 						  on: Exception
 						  do: [ :ex |  ] ] ] ] ].
 	^ nil
+]
+
+{ #category : 'accessing-metadata' }
+HiDeStorage >> timestampKey [
+
+	^ 'timestamp'
 ]
 
 { #category : 'updating' }

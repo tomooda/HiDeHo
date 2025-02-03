@@ -67,6 +67,18 @@ THiDePersistency >> hideLoadPayload: aFileReference [
 ]
 
 { #category : 'hideho-accessing' }
+THiDePersistency >> hideMetadata [
+
+	^ hideMetadata
+]
+
+{ #category : 'hideho-accessing' }
+THiDePersistency >> hideMetadata: aDictionary [
+
+	hideMetadata := aDictionary
+]
+
+{ #category : 'hideho-accessing' }
 THiDePersistency >> hideMetadataAt: aString [
 
 	^ hideMetadata at: aString ifAbsent: [ nil ]

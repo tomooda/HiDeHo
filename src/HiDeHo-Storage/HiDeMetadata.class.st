@@ -20,6 +20,33 @@ HiDeMetadata class >> metadataFilename [
 	^ 'metadata.json'
 ]
 
+{ #category : 'tags' }
+HiDeMetadata >> addTag: aString [
+
+	| tags |
+	tags := self at: self tagsKey.
+	(tags includes: aString) ifFalse: [
+		self at: self tagsKey put: (tags copyWith: aString) ].
+	^ aString
+]
+
+{ #category : 'tags' }
+HiDeMetadata >> addTags: aCollectionOfString [
+
+	| tags tagsToAdd |
+	tags := self at: self tagsKey.
+	tagsToAdd := aCollectionOfString asArray copyWithoutAll: tags.
+	tagsToAdd ifNotEmpty: [
+		self at: self tagsKey put: (tags copyWithAll: tagsToAdd) ].
+	^ aCollectionOfString
+]
+
+{ #category : 'tags' }
+HiDeMetadata >> hasTag: aString [
+
+	^ (self at: self tagsKey) includes: aString
+]
+
 { #category : 'accessing' }
 HiDeMetadata >> identity [
 
@@ -58,7 +85,8 @@ HiDeMetadata >> initialize: aCapacity [
 HiDeMetadata >> installDefaults [
 
 	self at: self identityKey put: nil.
-	self at: self timestampKey put: DateAndTime now asString
+	self at: self timestampKey put: DateAndTime now asString.
+	self at: self tagsKey put: {  }
 ]
 
 { #category : 'storage' }
@@ -78,6 +106,28 @@ HiDeMetadata >> metadataFilename [
 	^ self class metadataFilename
 ]
 
+{ #category : 'tags' }
+HiDeMetadata >> removeTag: aString [
+
+	| tags |
+	tags := self at: self tagsKey.
+	(tags includes: aString) ifTrue: [
+		self at: self tagsKey put: (tags copyWithout: aString) ].
+	^ aString
+]
+
+{ #category : 'tags' }
+HiDeMetadata >> removeTags: aCollectionOfString [
+
+	| tags tagsToRemove |
+	tags := self at: self tagsKey.
+	tagsToRemove := aCollectionOfString asArray select: [ :tag |
+		                tags includes: tag ].
+	tagsToRemove ifNotEmpty: [
+		self at: self tagsKey put: (tags copyWithoutAll: tagsToRemove) ].
+	^ aCollectionOfString
+]
+
 { #category : 'storage' }
 HiDeMetadata >> save: aFileReference [
 
@@ -86,6 +136,12 @@ HiDeMetadata >> save: aFileReference [
 			ensureDelete;
 			writeStreamDo: [ :stream |
 				STONJSON put: self asOrderedDictionary onStream: stream ] ]
+]
+
+{ #category : 'accessing' }
+HiDeMetadata >> tagsKey [
+
+	^ 'tags'
 ]
 
 { #category : 'accessing' }

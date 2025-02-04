@@ -24,7 +24,7 @@ HiDeStorage >> basepathChanged [
 
 	self
 		loadSettings;
-		updateChronicle
+		loadChronicle
 ]
 
 { #category : 'accessing-files' }
@@ -139,9 +139,9 @@ HiDeStorage >> chronicleSave: aHiDePersistency [
 		chronicleFileReferenceFor: aHiDePersistency hideMetadata
 		do: [ :ref |
 			| backupRef |
-			backupRef := ref copy renameTo:
-					             (ref withExtension: 'moving') basename.
-			ref ensureCreateDirectory.
+			backupRef := ref withExtension: 'moving'.
+			ref copyTo: backupRef.
+			ref ensureDeleteAllChildren.
 			aHiDePersistency hideUpdateMetadataStorage: self.
 			aHiDePersistency hideMetadata save: ref.
 			aHiDePersistency hideSave: ref storage: self.
@@ -179,12 +179,12 @@ HiDeStorage >> ensureIdentity: aHiDeMetadata [
 		self chronicleFileReferenceDo: [ :chronicleDir |
 			100 timesRepeat: [
 				| ref |
-				ref := chronicleDir
-				       / (prefix , (String streamContents: [ :stream |
-						         12 timesRepeat: [
-							         stream nextPut:
-								         ('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ' at:
-									          (random nextInteger: 32)) ] ])).
+				ref := (chronicleDir
+				        / (prefix , (String streamContents: [ :stream |
+						          12 timesRepeat: [
+							          stream nextPut:
+								          ('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ' at:
+									           (random nextInteger: 32)) ] ]))) resolve.
 				([ ref fileSystem createDirectory: ref ]
 					 on: Exception
 					 do: [ :ex | ex return: nil ]) ifNotNil: [
@@ -210,7 +210,7 @@ HiDeStorage >> loadChronicle [
 			ifAbsentPut: [ self createPayloadFor: metadata ] ].
 	chronicle valuesDo: [ :payload |
 		self chronicleLoad: payload.
-		chronicle at: payload metadata identity put: payload ]
+		chronicle at: payload hideMetadata identity put: payload ]
 ]
 
 { #category : 'operations-settings' }
@@ -305,10 +305,4 @@ HiDeStorage >> temporaryDirectoryReferenceDo: aBlock [
 						  on: Exception
 						  do: [ :ex |  ] ] ] ] ].
 	^ nil
-]
-
-{ #category : 'updating' }
-HiDeStorage >> updateChronicle [
-
-	
 ]

@@ -23,6 +23,7 @@ HiDeMetadataTest >> setUp [
 HiDeMetadataTest >> testHideSaveMetaData [
 
 	metadata identity: 'test identity'.
+	metadata addTag: 'test tag'.
 	metadata at: 'name' put: 'test name'.
 	metadata save: root.
 	self assert: (HiDeMetadata load: root) equals: metadata
@@ -45,14 +46,15 @@ HiDeMetadataTest >> testLoad [
 		stream
 			nextPutAll: '{"id":"test identity", "timestamp":"';
 			nextPutAll: past asString;
-			nextPutAll: '", "foo":10}' ].
+			nextPutAll: '", "foo":10, "tags":["test tag"]}' ].
 	self assert: metadata identity isNil.
 	self assert: metadata timestamp > past.
 	self assert: (metadata at: 'foo' ifAbsent: [ nil ]) isNil.
 	metadata load: root.
 	self assert: metadata identity equals: 'test identity'.
 	self assert: metadata timestamp equals: past.
-	self assert: (metadata at: 'foo') equals: 10
+	self assert: (metadata at: 'foo') equals: 10.
+	self assert: (metadata hasTag: 'test tag')
 ]
 
 { #category : 'tests' }

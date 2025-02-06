@@ -4,7 +4,6 @@ Trait {
 		'hideMetadata',
 		'hideStorage'
 	],
-	#classTraits : '{} + TraitedClass',
 	#category : 'HiDeHo-Storage-Core',
 	#package : 'HiDeHo-Storage',
 	#tag : 'Core'

@@ -38,8 +38,7 @@ HiDeStorage >> basepathDo: aBlock [
 { #category : 'operations' }
 HiDeStorage >> chronicle [
 
-	^ chronicle values asSortedCollection: [ :older :newer |
-		  older hideMetadata timestamp <= newer hideMetadata timestamp ]
+	^ self chronicleSuchThat: [ :payload | true ]
 ]
 
 { #category : 'operations' }
@@ -152,6 +151,17 @@ HiDeStorage >> chronicleSave: aHiDePersistency [
 			backupRef ensureDeleteAll.
 			^ ref ].
 	^ nil
+]
+
+{ #category : 'operations' }
+HiDeStorage >> chronicleSuchThat: aBlock [
+
+	| payloads |
+	payloads := chronicle values select: [ :payload |
+		            self chronicleLoad: payload.
+		            aBlock value: payload ].
+	^ payloads asSortedCollection: [ :older :newer |
+		  older hideMetadata timestamp <= newer hideMetadata timestamp ]
 ]
 
 { #category : 'operations-chronicle' }

@@ -60,7 +60,10 @@ HiDeStorage >> chronicleAt: aString [
 { #category : 'operations' }
 HiDeStorage >> chronicleAt: aString ifAbsent: errorBlock [
 
-	^ chronicle at: aString ifAbsent: errorBlock
+	^ chronicle
+		  at: aString
+		  ifPresent: [ :payload | self chronicleLoad: payload ]
+		  ifAbsent: errorBlock
 ]
 
 { #category : 'accessing-files' }
@@ -207,10 +210,7 @@ HiDeStorage >> loadChronicle [
 	self chronicleMetadataDo: [ :metadata |
 		chronicle
 			at: metadata identity
-			ifAbsentPut: [ self createPayloadFor: metadata ] ].
-	chronicle valuesDo: [ :payload |
-		self chronicleLoad: payload.
-		chronicle at: payload hideMetadata identity put: payload ]
+			ifAbsentPut: [ self createPayloadFor: metadata ] ]
 ]
 
 { #category : 'operations-settings' }

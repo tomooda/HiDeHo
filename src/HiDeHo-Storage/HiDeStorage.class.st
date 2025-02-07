@@ -157,9 +157,9 @@ HiDeStorage >> chronicleSave: aHiDePersistency [
 HiDeStorage >> chronicleSuchThat: aBlock [
 
 	| payloads |
-	payloads := chronicle values select: [ :payload |
-		            self chronicleLoad: payload.
-		            aBlock value: payload ].
+	payloads := chronicle values
+		            select: [ :payload | aBlock value: payload hideMetadata ]
+		            thenDo: [ :payload | self chronicleLoad: payload ].
 	^ payloads asSortedCollection: [ :older :newer |
 		  older hideMetadata timestamp <= newer hideMetadata timestamp ]
 ]

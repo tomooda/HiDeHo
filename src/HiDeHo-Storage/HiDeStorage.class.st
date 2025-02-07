@@ -160,7 +160,7 @@ HiDeStorage >> chronicleSuchThat: aBlock [
 	payloads := chronicle values
 		            select: [ :payload | aBlock value: payload hideMetadata ]
 		            thenDo: [ :payload | self chronicleLoad: payload ].
-	^ payloads asSortedCollection: [ :older :newer |
+	^ payloads asSortedCollection: [ :newer :older |
 		  older hideMetadata timestamp <= newer hideMetadata timestamp ]
 ]
 

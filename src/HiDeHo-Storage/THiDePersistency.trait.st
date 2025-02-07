@@ -1,12 +1,26 @@
 Trait {
 	#name : 'THiDePersistency',
 	#instVars : [
-		'hideMetadata'
+		'hideMetadata',
+		'hideStorage'
 	],
 	#category : 'HiDeHo-Storage-Core',
 	#package : 'HiDeHo-Storage',
 	#tag : 'Core'
 }
+
+{ #category : 'hideho-operations' }
+THiDePersistency >> hideLoad [
+
+	hideStorage ifNotNil: [ hideStorage chronicleLoad: self ]
+]
+
+{ #category : 'hideho-operations' }
+THiDePersistency >> hideLoad: aFileReference [
+
+	^ hideStorage ifNotNil: [
+		  self hideLoad: aFileReference storage: hideStorage ]
+]
 
 { #category : 'hideho-operations' }
 THiDePersistency >> hideLoad: aFileReference storage: aHiDeStorage [
@@ -27,9 +41,34 @@ THiDePersistency >> hideMetadata: aDictionary [
 ]
 
 { #category : 'hideho-operations' }
+THiDePersistency >> hideSave [
+
+	hideStorage ifNotNil: [ hideStorage chronicleSave: self ]
+]
+
+{ #category : 'hideho-operations' }
+THiDePersistency >> hideSave: aFileReference [
+
+	^ hideStorage ifNotNil: [
+		  self hideSave: aFileReference storage: hideStorage ]
+]
+
+{ #category : 'hideho-operations' }
 THiDePersistency >> hideSave: aFileReference storage: aHiDeStorage [
 
 	^ self subclassResponsibility
+]
+
+{ #category : 'hideho-accessing' }
+THiDePersistency >> hideStorage [
+
+	^ hideStorage
+]
+
+{ #category : 'hideho-accessing' }
+THiDePersistency >> hideStorage: aHiDeStorage [
+
+	hideStorage := aHiDeStorage
 ]
 
 { #category : 'hideho-operations' }

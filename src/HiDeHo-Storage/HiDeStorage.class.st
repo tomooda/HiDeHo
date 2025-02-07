@@ -147,6 +147,7 @@ HiDeStorage >> chronicleSave: aHiDePersistency [
 			ref ensureDeleteAllChildren.
 			aHiDePersistency hideUpdateMetadataStorage: self.
 			aHiDePersistency hideMetadata save: ref.
+			aHiDePersistency hideStorage: self.
 			aHiDePersistency hideSave: ref storage: self.
 			backupRef ensureDeleteAll.
 			^ ref ].
@@ -158,6 +159,7 @@ HiDeStorage >> createPayloadFor: aHiDeMetadata [
 
 	^ (self payloadClassFor: aHiDeMetadata) new
 		  hideMetadata: aHiDeMetadata;
+		  hideStorage: self;
 		  yourself
 ]
 

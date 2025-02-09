@@ -145,6 +145,14 @@ HiDeMetadata >> tags [
 ]
 
 { #category : 'accessing' }
+HiDeMetadata >> tags: aCollectionOfString [
+
+	self
+		at: self tagsKey
+		put: aCollectionOfString asSortedCollection asArray
+]
+
+{ #category : 'accessing' }
 HiDeMetadata >> tagsKey [
 
 	^ 'tags'

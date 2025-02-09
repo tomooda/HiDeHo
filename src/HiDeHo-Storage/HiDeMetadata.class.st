@@ -24,7 +24,7 @@ HiDeMetadata class >> metadataFilename [
 HiDeMetadata >> addTag: aString [
 
 	| tags |
-	tags := self at: self tagsKey.
+	tags := self tags.
 	(tags includes: aString) ifFalse: [
 		self at: self tagsKey put: (tags copyWith: aString) ].
 	^ aString
@@ -34,7 +34,7 @@ HiDeMetadata >> addTag: aString [
 HiDeMetadata >> addTags: aCollectionOfString [
 
 	| tags tagsToAdd |
-	tags := self at: self tagsKey.
+	tags := self tags.
 	tagsToAdd := aCollectionOfString asArray copyWithoutAll: tags.
 	tagsToAdd ifNotEmpty: [
 		self at: self tagsKey put: (tags copyWithAll: tagsToAdd) ].
@@ -110,7 +110,7 @@ HiDeMetadata >> metadataFilename [
 HiDeMetadata >> removeTag: aString [
 
 	| tags |
-	tags := self at: self tagsKey.
+	tags := self tags.
 	(tags includes: aString) ifTrue: [
 		self at: self tagsKey put: (tags copyWithout: aString) ].
 	^ aString
@@ -120,7 +120,7 @@ HiDeMetadata >> removeTag: aString [
 HiDeMetadata >> removeTags: aCollectionOfString [
 
 	| tags tagsToRemove |
-	tags := self at: self tagsKey.
+	tags := self tags.
 	tagsToRemove := aCollectionOfString asArray select: [ :tag |
 		                tags includes: tag ].
 	tagsToRemove ifNotEmpty: [
@@ -136,6 +136,12 @@ HiDeMetadata >> save: aFileReference [
 			ensureDelete;
 			writeStreamDo: [ :stream |
 				STONJSON put: self asOrderedDictionary onStream: stream ] ]
+]
+
+{ #category : 'accessing' }
+HiDeMetadata >> tags [
+
+	^ self at: self tagsKey ifAbsent: [ #(  ) ]
 ]
 
 { #category : 'accessing' }

@@ -5,12 +5,12 @@ Trait {
 }
 
 { #category : 'operations' }
-THiDeEditTags >> editTags: aCollectionOfString on: chronicleModel title: aString createNewTagTitle: anotherString [
+THiDeEditTags >> editTags: aCollectionOfString on: aHiDePersistency title: aString createNewTagTitle: anotherString okAction: aBlock [
 
 	| listEditor |
 	listEditor := HiDeListEditPresenter new.
 	listEditor
-		items: chronicleModel tags;
+		items: aHiDePersistency hideMetadata tags;
 		addAction: [
 			| menu |
 			menu := listEditor newMenu.
@@ -38,7 +38,7 @@ THiDeEditTags >> editTags: aCollectionOfString on: chronicleModel title: aString
 	listEditor openDialog
 		title: aString;
 		okAction: [
-			chronicleModel tags: listEditor items.
-			chronicleModel hideSave.
-			self updateQueryHistory ]
+			aHiDePersistency hideMetadata tags: listEditor items.
+			aHiDePersistency hideSave.
+			aBlock ifNotNil: #value ]
 ]

@@ -16,10 +16,13 @@ BaselineOfHiDeHo >> baseline: spec [
 			package: 'HiDeHo-Sorter'
 			with: [ spec requires: #( 'HiDeHo-Node' ) ];
 			package: 'HiDeHo-Syntax' with: [ spec requires: #(  ) ];
-			package: 'HiDeHo-Storage' with: [ spec requires: #(  ) ] ].
+			package: 'HiDeHo-Storage' with: [ spec requires: #(  ) ];
+			package: 'HiDeHo-UI' with: [ spec requires: #(  ) ] ].
 	spec
 		group: 'core'
-		with: #( 'HiDeHo-Node' 'HiDeHo-Sorter' 'HiDeHo-Syntax' 'HiDeHo-Storage' );
+		with:
+			#( 'HiDeHo-Node' 'HiDeHo-Sorter' 'HiDeHo-Syntax' 'HiDeHo-Storage'
+			   'HiDeHo-UI' );
 		group: 'full' with: #( 'core' );
 		group: 'default' with: #( 'full' )
 ]

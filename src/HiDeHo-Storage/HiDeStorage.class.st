@@ -153,6 +153,18 @@ HiDeStorage >> chronicleSave: aHiDePersistency [
 	^ nil
 ]
 
+{ #category : 'operations-chronicle' }
+HiDeStorage >> chronicleSaveMetadata: aHiDePersistency [
+
+	self
+		ensureIdentity: aHiDePersistency hideMetadata;
+		chronicleFileReferenceFor: aHiDePersistency hideMetadata
+		do: [ :ref |
+			aHiDePersistency hideMetadata save: ref.
+			^ ref ].
+	^ nil
+]
+
 { #category : 'operations' }
 HiDeStorage >> chronicleSuchThat: aBlock [
 

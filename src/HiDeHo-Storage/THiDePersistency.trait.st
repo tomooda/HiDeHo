@@ -59,6 +59,12 @@ THiDePersistency >> hideSave: aFileReference storage: aHiDeStorage [
 	^ self subclassResponsibility
 ]
 
+{ #category : 'hideho-operations' }
+THiDePersistency >> hideSaveMetadata [
+
+	hideStorage ifNotNil: [ hideStorage chronicleSaveMetadata: self ]
+]
+
 { #category : 'hideho-accessing' }
 THiDePersistency >> hideStorage [
 

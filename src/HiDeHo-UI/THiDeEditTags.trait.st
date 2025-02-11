@@ -39,6 +39,6 @@ THiDeEditTags >> editTags: aCollectionOfString on: aHiDePersistency title: aStri
 		title: aString;
 		okAction: [
 			aHiDePersistency hideMetadata tags: listEditor items.
-			aHiDePersistency hideSave.
+			aHiDePersistency hideSaveMetadata.
 			aBlock ifNotNil: #value ]
 ]

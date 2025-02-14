@@ -182,6 +182,7 @@ HiDeStorage >> createPayloadFor: aHiDeMetadata [
 	^ (self payloadClassFor: aHiDeMetadata) new
 		  hideMetadata: aHiDeMetadata;
 		  hideStorage: self;
+		  hideUnload;
 		  yourself
 ]
 

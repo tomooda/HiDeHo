@@ -34,6 +34,7 @@ HiDePersistencySlotTest >> testBasicRead [
 	copy := HiDePersistencyObjectForTesting new.
 	copy hideStorage: storage.
 	copy hideMetadata identity: object hideMetadata identity.
+	copy hideUnload.
 	self
 		assert: copy basicX
 		equals: (object class slotNamed: #x) unloaded
@@ -49,6 +50,7 @@ HiDePersistencySlotTest >> testRead [
 	self assert: copy x equals: nil.
 	copy hideStorage: storage.
 	copy hideMetadata identity: object hideMetadata identity.
+	copy hideUnload.
 	self assert: copy x equals: object x.
 	copy hideStorage: nil.
 	copy hideMetadata identity: nil.

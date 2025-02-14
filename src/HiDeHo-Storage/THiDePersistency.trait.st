@@ -80,7 +80,7 @@ THiDePersistency >> hideStorage: aHiDeStorage [
 { #category : 'hideho-operations' }
 THiDePersistency >> hideUnload [
 
-	self class slots do: [ :slot |
+	self class allSlots do: [ :slot |
 		(slot isKindOf: HiDePersistencySlot) ifTrue: [ slot unload: self ] ]
 ]
 

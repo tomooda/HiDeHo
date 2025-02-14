@@ -2,6 +2,7 @@ Class {
 	#name : 'HiDePersistencySlot',
 	#superclass : 'InstanceVariableSlot',
 	#instVars : [
+		'loader',
 		'unloaded'
 	],
 	#category : 'HiDeHo-Storage-Core',
@@ -25,10 +26,16 @@ HiDePersistencySlot >> emitValue: aMethodBuilder [
 ]
 
 { #category : 'initialization' }
+HiDePersistencySlot >> initialize [
+
+	super initialize.
+	loader := #hideLoad
+]
+
+{ #category : 'initialization' }
 HiDePersistencySlot >> initialize: aHiDePersistency [
 
-	self initializeUnloaded.
-	self write: unloaded to: aHiDePersistency
+	self initializeUnloaded
 ]
 
 { #category : 'initialization' }
@@ -37,13 +44,25 @@ HiDePersistencySlot >> initializeUnloaded [
 	unloaded ifNil: [ unloaded := Object new ]
 ]
 
+{ #category : 'accessing' }
+HiDePersistencySlot >> loader [
+
+	^ loader
+]
+
+{ #category : 'accessing' }
+HiDePersistencySlot >> loader: aSymbolOrBlock [
+
+	loader := aSymbolOrBlock
+]
+
 { #category : 'meta-object-protocol' }
 HiDePersistencySlot >> read: aHiDePersistency [
 
 	| value |
 	^ (value := self basicRead: aHiDePersistency) == unloaded
 		  ifTrue: [
-			  aHiDePersistency hideLoad.
+			  loader value: aHiDePersistency.
 			  (value := self basicRead: aHiDePersistency) == unloaded
 				  ifTrue: [ nil ]
 				  ifFalse: [ value ] ]
@@ -56,7 +75,7 @@ HiDePersistencySlot >> unload: aHiDePersistency [
 	self write: unloaded to: aHiDePersistency
 ]
 
-{ #category : 'initialization' }
+{ #category : 'accessing' }
 HiDePersistencySlot >> unloaded [
 
 	^ unloaded

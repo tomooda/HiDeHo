@@ -10,10 +10,22 @@ Class {
 	#tag : 'Core'
 }
 
+{ #category : 'comparing' }
+HiDePersistencySlot >> = other [
+
+	^ super = other and: [ loader = other loader ]
+]
+
 { #category : 'meta-object-protocol' }
 HiDePersistencySlot >> basicRead: aHiDePersistency [
 
 	^ self object: aHiDePersistency instVarAt: index
+]
+
+{ #category : 'accessing' }
+HiDePersistencySlot >> defaultLoader [
+
+	^ #hideLoad
 ]
 
 { #category : 'meta-object-protocol' }
@@ -25,11 +37,24 @@ HiDePersistencySlot >> emitValue: aMethodBuilder [
 		send: #read:
 ]
 
+{ #category : 'comparing' }
+HiDePersistencySlot >> hasSameDefinitionAs: otherVariable [
+	
+ 	^(super hasSameDefinitionAs: otherVariable) 
+		and: [ loader = otherVariable loader ]
+]
+
+{ #category : 'comparing' }
+HiDePersistencySlot >> hash [
+
+	^ super hash bitXor: loader hash
+]
+
 { #category : 'initialization' }
 HiDePersistencySlot >> initialize [
 
 	super initialize.
-	loader := #hideLoad
+	loader := self defaultLoader
 ]
 
 { #category : 'initialization' }
@@ -42,7 +67,7 @@ HiDePersistencySlot >> initialize: aHiDePersistency [
 HiDePersistencySlot >> initializeUnloaded [
 
 	unloaded ifNil: [ unloaded := Object new ].
-	loader ifNil: [ loader := #hideLoad ]
+	loader ifNil: [ loader := self defaultLoader ]
 ]
 
 { #category : 'accessing' }
@@ -55,6 +80,18 @@ HiDePersistencySlot >> loader [
 HiDePersistencySlot >> loader: aSymbolOrBlock [
 
 	loader := aSymbolOrBlock
+]
+
+{ #category : 'printing' }
+HiDePersistencySlot >> printOn: aStream [
+
+	aStream
+		store: self name;
+		nextPutAll: ' => ';
+		nextPutAll: self class name.
+	loader ~= self defaultLoader ifTrue: [
+		aStream nextPutAll: ' loader: '.
+		loader printOn: aStream ]
 ]
 
 { #category : 'meta-object-protocol' }

@@ -41,7 +41,8 @@ HiDePersistencySlot >> initialize: aHiDePersistency [
 { #category : 'initialization' }
 HiDePersistencySlot >> initializeUnloaded [
 
-	unloaded ifNil: [ unloaded := Object new ]
+	unloaded ifNil: [ unloaded := Object new ].
+	loader ifNil: [ loader := #hideUnload ]
 ]
 
 { #category : 'accessing' }

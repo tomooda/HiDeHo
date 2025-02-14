@@ -1,10 +1,19 @@
 Class {
 	#name : 'HiDePersistencySlot',
 	#superclass : 'InstanceVariableSlot',
+	#instVars : [
+		'unloaded'
+	],
 	#category : 'HiDeHo-Storage-Core',
 	#package : 'HiDeHo-Storage',
 	#tag : 'Core'
 }
+
+{ #category : 'meta-object-protocol' }
+HiDePersistencySlot >> basicRead: aHiDePersistency [
+
+	^ self object: aHiDePersistency instVarAt: index
+]
 
 { #category : 'meta-object-protocol' }
 HiDePersistencySlot >> emitValue: aMethodBuilder [
@@ -18,15 +27,39 @@ HiDePersistencySlot >> emitValue: aMethodBuilder [
 { #category : 'initialization' }
 HiDePersistencySlot >> initialize: aHiDePersistency [
 
-	self write: HiDeUnloaded current to: aHiDePersistency
+	self initializeUnloaded.
+	self write: unloaded to: aHiDePersistency
+]
+
+{ #category : 'initialization' }
+HiDePersistencySlot >> initializeUnloaded [
+
+	unloaded ifNil: [ unloaded := Object new ]
 ]
 
 { #category : 'meta-object-protocol' }
 HiDePersistencySlot >> read: aHiDePersistency [
 
-	^ (super read: aHiDePersistency) ifHiDeUnloaded: [
-		  aHiDePersistency hideLoad.
-		  super read: aHiDePersistency ]
+	| value |
+	^ (value := self basicRead: aHiDePersistency) == unloaded
+		  ifTrue: [
+			  aHiDePersistency hideLoad.
+			  (value := self basicRead: aHiDePersistency) == unloaded
+				  ifTrue: [ nil ]
+				  ifFalse: [ value ] ]
+		  ifFalse: [ value ]
+]
+
+{ #category : 'meta-object-protocol' }
+HiDePersistencySlot >> unload: aHiDePersistency [
+
+	self write: unloaded to: aHiDePersistency
+]
+
+{ #category : 'initialization' }
+HiDePersistencySlot >> unloaded [
+
+	^ unloaded
 ]
 
 { #category : 'meta-object-protocol' }

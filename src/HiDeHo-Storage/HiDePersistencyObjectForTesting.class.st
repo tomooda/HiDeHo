@@ -4,12 +4,18 @@ Class {
 	#traits : 'THiDePersistency',
 	#classTraits : 'THiDePersistency classTrait',
 	#instVars : [
-		'x'
+		'#x => HiDePersistencySlot'
 	],
 	#category : 'HiDeHo-Storage-Tests',
 	#package : 'HiDeHo-Storage',
 	#tag : 'Tests'
 }
+
+{ #category : 'accessing' }
+HiDePersistencyObjectForTesting >> basicX [
+
+	^ (self class slotNamed: #x) basicRead: self
+]
 
 { #category : 'hideho-operations' }
 HiDePersistencyObjectForTesting >> hideLoad: aFileReference storage: aHiDeStorage [
@@ -30,6 +36,14 @@ HiDePersistencyObjectForTesting >> hideSave: aFileReference storage: aHiDeStorag
 HiDePersistencyObjectForTesting >> hideUpdateMetadataStorage: aHiDeStorage [
 
 	hideMetadata at: 'x' put: x asString
+]
+
+{ #category : 'initialization' }
+HiDePersistencyObjectForTesting >> initialize [
+
+	self class initializeSlots: self.
+	super initialize.
+	self initializeHideMetadata
 ]
 
 { #category : 'accessing' }

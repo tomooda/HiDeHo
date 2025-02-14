@@ -1,5 +1,5 @@
 Class {
-	#name : 'THiDePersistencyTest',
+	#name : 'HiDePersistencySlotTest',
 	#superclass : 'TestCase',
 	#instVars : [
 		'filesystem',
@@ -13,7 +13,7 @@ Class {
 }
 
 { #category : 'running' }
-THiDePersistencyTest >> setUp [
+HiDePersistencySlotTest >> setUp [
 
 	filesystem := FileSystem memory.
 	root := filesystem root.
@@ -26,7 +26,7 @@ THiDePersistencyTest >> setUp [
 ]
 
 { #category : 'tests' }
-THiDePersistencyTest >> testHiDeSave [
+HiDePersistencySlotTest >> testBasicRead [
 
 	| copy |
 	object x: 10.
@@ -34,34 +34,23 @@ THiDePersistencyTest >> testHiDeSave [
 	copy := HiDePersistencyObjectForTesting new.
 	copy hideStorage: storage.
 	copy hideMetadata identity: object hideMetadata identity.
-	copy hideLoad.
-	self assert: copy x equals: object x
+	self
+		assert: copy basicX
+		equals: (object class slotNamed: #x) unloaded
 ]
 
 { #category : 'tests' }
-THiDePersistencyTest >> testHiDeSaveStorage [
+HiDePersistencySlotTest >> testRead [
 
 	| copy |
 	object x: 10.
-	object hideSave: root storage: storage.
+	object hideSave.
 	copy := HiDePersistencyObjectForTesting new.
-	copy hideLoad: root storage: storage.
+	self assert: copy x equals: nil.
+	copy hideStorage: storage.
+	copy hideMetadata identity: object hideMetadata identity.
+	self assert: copy x equals: object x.
+	copy hideStorage: nil.
+	copy hideMetadata identity: nil.
 	self assert: copy x equals: object x
-]
-
-{ #category : 'tests' }
-THiDePersistencyTest >> testHideLoad [
-
-	root / 'x.json' writeStreamDo: [ :stream | stream nextPutAll: '10' ].
-	object hideStorage: storage.
-	object hideLoad: root.
-	self assert: object x equals: 10
-]
-
-{ #category : 'tests' }
-THiDePersistencyTest >> testHideLoadStorage [
-
-	root / 'x.json' writeStreamDo: [ :stream | stream nextPutAll: '10' ].
-	object hideLoad: root storage: storage.
-	self assert: object x equals: 10
 ]

@@ -18,14 +18,14 @@ HiDePersistencyObjectForTesting >> basicX [
 ]
 
 { #category : 'hideho-operations' }
-HiDePersistencyObjectForTesting >> hideLoad: aFileReference storage: aHiDeStorage [
+HiDePersistencyObjectForTesting >> hideLoad: aFileReference [
 
 	x := aFileReference / 'x.json' readStreamDo: [ :stream |
 		     STONJSON fromStream: stream ]
 ]
 
 { #category : 'hideho-operations' }
-HiDePersistencyObjectForTesting >> hideSave: aFileReference storage: aHiDeStorage [
+HiDePersistencyObjectForTesting >> hideSave: aFileReference [
 
 	(aFileReference / 'x.json')
 		ensureDelete;

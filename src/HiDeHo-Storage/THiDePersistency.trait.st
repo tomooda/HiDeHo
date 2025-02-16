@@ -9,23 +9,35 @@ Trait {
 	#tag : 'Core'
 }
 
+{ #category : 'hideho-accessing' }
+THiDePersistency >> hideBaseDirectory [
+
+	^ self hideBaseDirectoryDo: #yourself
+]
+
+{ #category : 'hideho-accessing' }
+THiDePersistency >> hideBaseDirectoryDo: aBlock [
+
+	^ hideStorage ifNotNil: [
+		  hideStorage chronicleFileReferenceFor: hideMetadata do: aBlock ]
+]
+
 { #category : 'hideho-operations' }
 THiDePersistency >> hideLoad [
 
-	hideStorage ifNotNil: [ hideStorage chronicleLoad: self ]
+	self hideBaseDirectoryDo: [ :ref | self hideLoad: ref ]
 ]
 
 { #category : 'hideho-operations' }
 THiDePersistency >> hideLoad: aFileReference [
 
-	^ hideStorage ifNotNil: [
-		  self hideLoad: aFileReference storage: hideStorage ]
+	^ self subclassResponsibility
 ]
 
 { #category : 'hideho-operations' }
-THiDePersistency >> hideLoad: aFileReference storage: aHiDeStorage [
+THiDePersistency >> hideLoadMetadata: aFileReference [
 
-	^ self subclassResponsibility
+	hideMetadata load: aFileReference
 ]
 
 { #category : 'hideho-accessing' }
@@ -48,13 +60,6 @@ THiDePersistency >> hideSave [
 
 { #category : 'hideho-operations' }
 THiDePersistency >> hideSave: aFileReference [
-
-	^ hideStorage ifNotNil: [
-		  self hideSave: aFileReference storage: hideStorage ]
-]
-
-{ #category : 'hideho-operations' }
-THiDePersistency >> hideSave: aFileReference storage: aHiDeStorage [
 
 	^ self subclassResponsibility
 ]

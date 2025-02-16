@@ -26,6 +26,7 @@ HiDeStorageTest >> testChronicleLoad [
 
 	| object id |
 	object := HiDePersistencyObjectForTesting new.
+	object hideStorage: storage.
 	object hideMetadata at: 'name' put: 'test name'.
 	object x: 10.
 	storage chronicleSave: object.

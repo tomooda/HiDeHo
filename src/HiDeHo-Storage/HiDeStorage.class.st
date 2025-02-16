@@ -42,15 +42,6 @@ HiDeStorage >> chronicle [
 ]
 
 { #category : 'operations' }
-HiDeStorage >> chronicleAdd: aHiDePersistency [
-
-	self chronicleSave: aHiDePersistency.
-	chronicle
-		at: aHiDePersistency hideMetadata identity
-		put: aHiDePersistency
-]
-
-{ #category : 'operations' }
 HiDeStorage >> chronicleAt: aString [
 
 	^ self chronicleAt: aString ifAbsent: [ nil ]
@@ -59,10 +50,7 @@ HiDeStorage >> chronicleAt: aString [
 { #category : 'operations' }
 HiDeStorage >> chronicleAt: aString ifAbsent: errorBlock [
 
-	^ chronicle
-		  at: aString
-		  ifPresent: [ :payload | self chronicleLoad: payload ]
-		  ifAbsent: errorBlock
+	^ chronicle at: aString ifAbsent: errorBlock
 ]
 
 { #category : 'accessing-files' }
@@ -94,9 +82,11 @@ HiDeStorage >> chronicleLoad: aHiDePersistency [
 	self
 		chronicleFileReferenceFor: aHiDePersistency hideMetadata
 		do: [ :ref |
-			aHiDePersistency hideMetadata load: ref.
-			aHiDePersistency hideLoad: ref storage: self.
-			^ aHiDePersistency ].
+			^ aHiDePersistency
+				  hideLoadMetadata: ref;
+				  hideLoad: ref;
+				  hideStorage: self;
+				  yourself ].
 	^ nil
 ]
 
@@ -147,8 +137,11 @@ HiDeStorage >> chronicleSave: aHiDePersistency [
 			aHiDePersistency hideUpdateMetadataStorage: self.
 			aHiDePersistency hideMetadata save: ref.
 			aHiDePersistency hideStorage: self.
-			aHiDePersistency hideSave: ref storage: self.
+			aHiDePersistency hideSave: ref.
 			backupRef ensureDeleteAll.
+			chronicle
+				at: aHiDePersistency hideMetadata identity
+				put: aHiDePersistency.
 			^ ref ].
 	^ nil
 ]
@@ -169,11 +162,25 @@ HiDeStorage >> chronicleSaveMetadata: aHiDePersistency [
 HiDeStorage >> chronicleSuchThat: aBlock [
 
 	| payloads |
-	payloads := chronicle values
-		            select: [ :payload | aBlock value: payload hideMetadata ]
-		            thenDo: [ :payload | self chronicleLoad: payload ].
+	payloads := chronicle values select: [ :payload |
+		            aBlock value: payload hideMetadata ].
 	^ payloads asSortedCollection: [ :newer :older |
 		  older hideMetadata timestamp <= newer hideMetadata timestamp ]
+]
+
+{ #category : 'operations' }
+HiDeStorage >> chronicleTail [
+
+	| tail tailtime |
+	chronicle ifEmpty: [ ^ nil ].
+	tail := chronicle values anyOne.
+	tailtime := tail hideMetadata timestamp.
+	chronicle valuesDo: [ :persistency |
+		| time |
+		tailtime < (time := persistency hideMetadata timestamp) ifTrue: [
+			tail := persistency.
+			tailtime := time ] ].
+	^ tail
 ]
 
 { #category : 'operations-chronicle' }

@@ -39,17 +39,6 @@ THiDePersistencyTest >> testHiDeSave [
 ]
 
 { #category : 'tests' }
-THiDePersistencyTest >> testHiDeSaveStorage [
-
-	| copy |
-	object x: 10.
-	object hideSave: root storage: storage.
-	copy := HiDePersistencyObjectForTesting new.
-	copy hideLoad: root storage: storage.
-	self assert: copy x equals: object x
-]
-
-{ #category : 'tests' }
 THiDePersistencyTest >> testHideLoad [
 
 	root / 'x.json' writeStreamDo: [ :stream | stream nextPutAll: '10' ].
@@ -59,9 +48,16 @@ THiDePersistencyTest >> testHideLoad [
 ]
 
 { #category : 'tests' }
-THiDePersistencyTest >> testHideLoadStorage [
+THiDePersistencyTest >> testHideLoadMetadata [
 
-	root / 'x.json' writeStreamDo: [ :stream | stream nextPutAll: '10' ].
-	object hideLoad: root storage: storage.
-	self assert: object x equals: 10
+	| metadata |
+	metadata := HiDeMetadata new.
+	metadata identity: 'test identity'.
+	metadata addTag: 'test tag'.
+	metadata at: 'name' put: 'test name'.
+	metadata save: root.
+	object hideLoadMetadata: root.
+	self assert: object hideMetadata identity equals: 'test identity'.
+	self assert: object hideMetadata tags equals: { 'test tag' }.
+	self assert: (object hideMetadata at: 'name') equals: 'test name'
 ]

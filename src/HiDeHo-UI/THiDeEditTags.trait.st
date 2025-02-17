@@ -42,3 +42,24 @@ THiDeEditTags >> editTags: aCollectionOfString on: aHiDePersistency title: aStri
 			aHiDePersistency hideSaveMetadata.
 			aBlock ifNotNil: #value ]
 ]
+
+{ #category : 'icons' }
+THiDeEditTags >> tagIcon [
+
+	| form fillColor a |
+	fillColor := Color white.
+	form := Form extent: 24 @ 24 depth: 32.
+	a := 8.
+	form getCanvas
+		drawPolygon: {
+				(4 @ 4).
+				(4 + a @ 4).
+				(23 @ (23 - a)).
+				(23 - a @ 23).
+				4 @ (a + 4) }
+		color: Color white
+		borderWidth: 1
+		borderColor: Color black;
+		flush.
+	^ form
+]

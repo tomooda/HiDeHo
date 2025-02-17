@@ -169,6 +169,15 @@ HiDeStorage >> chronicleSuchThat: aBlock [
 ]
 
 { #category : 'operations' }
+HiDeStorage >> chronicleTags [
+
+	^ (chronicle values inject: Set new into: [ :tags :persistency |
+		   tags
+			   addAll: persistency hideMetadata tags;
+			   yourself ]) asSortedCollection
+]
+
+{ #category : 'operations' }
 HiDeStorage >> chronicleTail [
 
 	| tail tailtime |

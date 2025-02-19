@@ -124,6 +124,20 @@ HiDeStorage >> chronicleMetadataDo: aBlock [
 ]
 
 { #category : 'operations-chronicle' }
+HiDeStorage >> chronicleRemove: aHiDePersistency [
+
+	self
+		chronicleFileReferenceFor: aHiDePersistency hideMetadata
+		do: [ :ref |
+			ref ensureDeleteAll.
+			chronicle
+				removeKey: aHiDePersistency hideMetadata identity
+				ifAbsent: [  ].
+			^ ref ].
+	^ nil
+]
+
+{ #category : 'operations-chronicle' }
 HiDeStorage >> chronicleSave: aHiDePersistency [
 
 	self

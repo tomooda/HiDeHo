@@ -438,6 +438,13 @@ HiDeStorage >> payloadClassFor: aHiDeMetadata [
 	^ self subclassResponsibility
 ]
 
+{ #category : 'operations-narrative' }
+HiDeStorage >> removeNarrative: aHiDeNarrative [
+
+	aHiDeNarrative fileReference ensureDelete.
+	narratives removeKey: aHiDeNarrative identity ifAbsent: [  ]
+]
+
 { #category : 'operations-settings' }
 HiDeStorage >> saveSettings [
 

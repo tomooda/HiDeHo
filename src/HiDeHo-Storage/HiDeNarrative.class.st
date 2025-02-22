@@ -13,19 +13,21 @@ Class {
 }
 
 { #category : 'instance creation' }
-HiDeNarrative class >> fromFile: aFileReference [
+HiDeNarrative class >> fromFile: aFileReference storage: aHiDeStorage [
 
 	^ self new
+		  storage: aHiDeStorage;
 		  load: aFileReference;
 		  yourself
 ]
 
 { #category : 'instance creation' }
-HiDeNarrative class >> id: aString storage: aHiDeStorage [
+HiDeNarrative class >> identity: aString name: anotherString storage: aHiDeStorage [
 
 	^ self new
 		  storage: aHiDeStorage;
-		  id: aString;
+		  identity: aString;
+		  name: anotherString;
 		  load;
 		  yourself
 ]
@@ -33,7 +35,9 @@ HiDeNarrative class >> id: aString storage: aHiDeStorage [
 { #category : 'adding-removing' }
 HiDeNarrative >> add: aHiDePersistency [
 
-	items add: (storage ensureIdentity: aHiDePersistency hideMetadata).
+	| id |
+	id := storage ensureIdentity: aHiDePersistency hideMetadata.
+	(items includes: id) ifFalse: [ items add: id ].
 	self save.
 	^ aHiDePersistency
 ]
@@ -42,7 +46,9 @@ HiDeNarrative >> add: aHiDePersistency [
 HiDeNarrative >> addAll: aCollectionOfHiDePersistency [
 
 	aCollectionOfHiDePersistency do: [ :persistency |
-		items add: persistency hideMetadata identity ].
+		| id |
+		id := storage ensureIdentity: persistency hideMetadata.
+		(items includes: id) ifFalse: [ items add: id ] ].
 	self save
 ]
 
@@ -77,6 +83,12 @@ HiDeNarrative >> identity [
 HiDeNarrative >> identity: aString [
 
 	identity := aString
+]
+
+{ #category : 'testing' }
+HiDeNarrative >> includes: aHiDePersistency [
+
+	^ items includes: aHiDePersistency hideMetadata identity
 ]
 
 { #category : 'initialization' }

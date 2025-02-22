@@ -300,6 +300,12 @@ HiDeStorage >> ensureNarrativeIdentity: aHiDeNarrative [
 		  ^ self error: 'Failed to create an identity' ]
 ]
 
+{ #category : 'operations-narrative' }
+HiDeStorage >> hasNarrativeNamed: aString [
+
+	^ narratives anySatisfy: [ :narrative | aString = narrative name ]
+]
+
 { #category : 'initialization' }
 HiDeStorage >> initialize [
 
@@ -325,9 +331,7 @@ HiDeStorage >> loadNarratives [
 		(ref filesMatching: 'narrative-*.json') do: [ :file |
 			narratives
 				at: file basename
-				put: ((self narrativeClass fromFile: file)
-						 storage: self;
-						 yourself) ] ]
+				put: (self narrativeClass fromFile: file storage: self) ] ]
 ]
 
 { #category : 'operations-settings' }
@@ -387,7 +391,8 @@ HiDeStorage >> narrativeSave: aHiDeNarrative [
 	self ensureNarrativeIdentity: aHiDeNarrative.
 	aHiDeNarrative storage: self.
 	aHiDeNarrative save.
-	narratives at: aHiDeNarrative identity put: aHiDeNarrative
+	narratives at: aHiDeNarrative identity put: aHiDeNarrative.
+	^ aHiDeNarrative
 ]
 
 { #category : 'operations-narrative' }
@@ -422,10 +427,8 @@ HiDeStorage >> newNarrativeNamed: aString [
 					       ('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ' at:
 						        (random nextInteger: 32)) ] ]) , '.json'.
 		(narratives includesKey: id) ifFalse: [
-			^ (self narrativeClass id: id storage: self)
-				  name: aString;
-				  save;
-				  yourself ] ].
+			^ self narrativeSave:
+				  (self narrativeClass identity: id name: aString storage: self) ] ].
 	^ nil
 ]
 

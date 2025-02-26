@@ -3,7 +3,8 @@ Class {
 	#superclass : 'Object',
 	#instVars : [
 		'basepath',
-		'chronicle'
+		'chronicle',
+		'narratives'
 	],
 	#category : 'HiDeHo-Storage-Core',
 	#package : 'HiDeHo-Storage',
@@ -34,7 +35,9 @@ HiDeStorage >> basepath: aFileReference [
 { #category : 'updating' }
 HiDeStorage >> basepathChanged [
 
-	self loadChronicle
+	self
+		loadChronicle;
+		loadNarratives
 ]
 
 { #category : 'accessing-files' }

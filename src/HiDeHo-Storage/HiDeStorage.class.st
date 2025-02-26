@@ -45,22 +45,28 @@ HiDeStorage >> basepathDo: aBlock [
 		  aBlock cull: ref copy ]
 ]
 
-{ #category : 'operations' }
+{ #category : 'operations-chronicle' }
 HiDeStorage >> chronicle [
 
 	^ self chronicleSuchThat: [ :payload | true ]
 ]
 
-{ #category : 'operations' }
+{ #category : 'operations-chronicle' }
 HiDeStorage >> chronicleAt: aString [
 
 	^ self chronicleAt: aString ifAbsent: [ nil ]
 ]
 
-{ #category : 'operations' }
+{ #category : 'operations-chronicle' }
 HiDeStorage >> chronicleAt: aString ifAbsent: errorBlock [
 
 	^ chronicle at: aString ifAbsent: errorBlock
+]
+
+{ #category : 'operations-chronicle' }
+HiDeStorage >> chronicleAt: aString ifPresent: aBlock [
+
+	^ chronicle at: aString ifPresent: aBlock
 ]
 
 { #category : 'accessing-files' }
@@ -158,17 +164,17 @@ HiDeStorage >> chronicleSaveMetadata: aHiDePersistency [
 	^ nil
 ]
 
-{ #category : 'operations' }
+{ #category : 'operations-chronicle' }
 HiDeStorage >> chronicleSuchThat: aBlock [
 
 	| payloads |
 	payloads := chronicle values select: [ :payload |
 		            aBlock value: payload hideMetadata ].
-	^ payloads asSortedCollection: [ :newer :older |
-		  older hideMetadata timestamp <= newer hideMetadata timestamp ]
+	^ payloads asSortedCollection:
+		  [ :payload | payload hideMetadata timestamp ] descending
 ]
 
-{ #category : 'operations' }
+{ #category : 'operations-chronicle' }
 HiDeStorage >> chronicleTags [
 
 	^ (chronicle values inject: Set new into: [ :tags :persistency |
@@ -177,7 +183,7 @@ HiDeStorage >> chronicleTags [
 			   yourself ]) asSortedCollection
 ]
 
-{ #category : 'operations' }
+{ #category : 'operations-chronicle' }
 HiDeStorage >> chronicleTail [
 
 	| tail tailtime |
@@ -237,14 +243,62 @@ HiDeStorage >> ensureIdentity: aHiDeMetadata [
 	^ nil
 ]
 
+{ #category : 'operations-narrative' }
+HiDeStorage >> ensureNarrativeIdentity: aHiDeNarrative [
+
+	^ aHiDeNarrative identity ifNil: [
+		  | timestamp random prefix |
+		  timestamp := DateAndTime now.
+		  random := Random new.
+		  prefix := String streamContents: [ :stream |
+			            stream nextPutAll: 'narrative-'.
+			            timestamp year printOn: stream base: 10 nDigits: 4.
+			            timestamp month printOn: stream base: 10 nDigits: 2.
+			            timestamp dayOfMonth
+				            printOn: stream
+				            base: 10
+				            nDigits: 2.
+			            stream nextPut: $-.
+			            timestamp hour printOn: stream base: 10 nDigits: 2.
+			            timestamp minute printOn: stream base: 10 nDigits: 2.
+			            timestamp second printOn: stream base: 10 nDigits: 2.
+			            stream nextPut: $-.
+			            timestamp nanoSecond
+				            printOn: stream
+				            base: 10
+				            nDigits: 9.
+			            stream nextPut: $- ].
+		  100 timesRepeat: [
+			  | id |
+			  id := prefix , (String streamContents: [ :stream |
+				         12 timesRepeat: [
+					         stream nextPut:
+						         ('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ' at:
+							          (random nextInteger: 32)) ] ]) , '.json'.
+			  (narratives includesKey: id) ifFalse: [
+				  aHiDeNarrative
+					  identity: id;
+					  storage: self.
+				  narratives at: id put: aHiDeNarrative.
+				  ^ id ] ].
+		  ^ self error: 'Failed to create an identity' ]
+]
+
+{ #category : 'operations-narrative' }
+HiDeStorage >> hasNarrativeNamed: aString [
+
+	^ narratives anySatisfy: [ :narrative | aString = narrative name ]
+]
+
 { #category : 'initialization' }
 HiDeStorage >> initialize [
 
 	super initialize.
-	chronicle := Dictionary new
+	chronicle := Dictionary new.
+	narratives := Dictionary new
 ]
 
-{ #category : 'operations' }
+{ #category : 'operations-chronicle' }
 HiDeStorage >> loadChronicle [
 
 	chronicle removeAll.
@@ -254,16 +308,115 @@ HiDeStorage >> loadChronicle [
 			ifAbsentPut: [ self createPayloadFor: metadata ] ]
 ]
 
+{ #category : 'operations-narrative' }
+HiDeStorage >> loadNarratives [
+
+	self basepathDo: [ :ref |
+		(ref filesMatching: 'narrative-*.json') do: [ :file |
+			narratives
+				at: file basename
+				put: (self narrativeClass fromFile: file storage: self) ] ]
+]
+
 { #category : 'class access' }
 HiDeStorage >> metadataClass [
 
 	^ HiDeMetadata
 ]
 
+{ #category : 'operations-narrative' }
+HiDeStorage >> narrative: aString [
+
+	^ Array streamContents: [ :stream |
+		  self
+			  narrativeAt: aString
+			  do: [ :persistency | stream nextPut: persistency ] ]
+]
+
+{ #category : 'operations-narrative' }
+HiDeStorage >> narrativeAt: aString [
+
+	^ narratives at: aString ifAbsent: [ nil ]
+]
+
+{ #category : 'operations-narrative' }
+HiDeStorage >> narrativeAt: aString do: aBlock [
+
+	^ narratives
+		  at: aString
+		  ifPresent: [ :narrative | narrative do: aBlock ]
+]
+
+{ #category : 'class access' }
+HiDeStorage >> narrativeClass [
+
+	^ HiDeNarrative
+]
+
+{ #category : 'operations-narrative' }
+HiDeStorage >> narrativeNameAt: aString [
+
+	^ narratives at: aString ifPresent: #name ifAbsent: [ nil ]
+]
+
+{ #category : 'operations-narrative' }
+HiDeStorage >> narrativeSave: aHiDeNarrative [
+
+	self ensureNarrativeIdentity: aHiDeNarrative.
+	aHiDeNarrative storage: self.
+	aHiDeNarrative save.
+	narratives at: aHiDeNarrative identity put: aHiDeNarrative.
+	^ aHiDeNarrative
+]
+
+{ #category : 'operations-narrative' }
+HiDeStorage >> narratives [
+
+	^ narratives values asSortedCollection: #name ascending
+]
+
+{ #category : 'operations-narrative' }
+HiDeStorage >> newNarrativeNamed: aString [
+
+	| timestamp random prefix |
+	timestamp := DateAndTime now.
+	random := Random new.
+	prefix := String streamContents: [ :stream |
+		          stream nextPutAll: 'narrative-'.
+		          timestamp year printOn: stream base: 10 nDigits: 4.
+		          timestamp month printOn: stream base: 10 nDigits: 2.
+		          timestamp dayOfMonth printOn: stream base: 10 nDigits: 2.
+		          stream nextPut: $-.
+		          timestamp hour printOn: stream base: 10 nDigits: 2.
+		          timestamp minute printOn: stream base: 10 nDigits: 2.
+		          timestamp second printOn: stream base: 10 nDigits: 2.
+		          stream nextPut: $-.
+		          timestamp nanoSecond printOn: stream base: 10 nDigits: 9.
+		          stream nextPut: $- ].
+	100 timesRepeat: [
+		| id |
+		id := prefix , (String streamContents: [ :stream |
+			       12 timesRepeat: [
+				       stream nextPut:
+					       ('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ' at:
+						        (random nextInteger: 32)) ] ]) , '.json'.
+		(narratives includesKey: id) ifFalse: [
+			^ self narrativeSave:
+				  (self narrativeClass identity: id name: aString storage: self) ] ].
+	^ nil
+]
+
 { #category : 'class access' }
 HiDeStorage >> payloadClassFor: aHiDeMetadata [
 
 	^ self subclassResponsibility
+]
+
+{ #category : 'operations-narrative' }
+HiDeStorage >> removeNarrative: aHiDeNarrative [
+
+	aHiDeNarrative fileReference ensureDelete.
+	narratives removeKey: aHiDeNarrative identity ifAbsent: [  ]
 ]
 
 { #category : 'accessing-files' }

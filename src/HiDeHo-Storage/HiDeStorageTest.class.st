@@ -95,6 +95,28 @@ HiDeStorageTest >> testEnsureIdentity [
 ]
 
 { #category : 'tests' }
+HiDeStorageTest >> testLoadNarratives [
+
+	| narrative1 narrative2 |
+	narrative1 := HiDeNarrative new
+		              name: 'test narrative 1';
+		              identity: 'narrative-1.json';
+		              storage: storage;
+		              save;
+		              yourself.
+	narrative2 := HiDeNarrative new
+		              name: 'test narrative 2';
+		              identity: 'narrative-2.json';
+		              storage: storage;
+		              save;
+		              yourself.
+	storage loadNarratives.
+	self assert: (storage narratives collect: #name) asArray equals: ({
+			 narrative1.
+			 narrative2 } collect: #name)
+]
+
+{ #category : 'tests' }
 HiDeStorageTest >> testLoadSettings [
 
 	storage chronicleMaxDays: 10.
@@ -105,6 +127,95 @@ HiDeStorageTest >> testLoadSettings [
 	storage loadSettings.
 	self assert: storage chronicleMaxDays equals: 10.
 	self assert: storage chronicleMaxSize equals: 1000
+]
+
+{ #category : 'tests' }
+HiDeStorageTest >> testNarrative [
+
+	| item narrative |
+	item := HiDePersistencyObjectForTesting new
+		        hideStorage: storage;
+		        hideSave;
+		        yourself.
+	narrative := HiDeNarrative new
+		             name: 'test narrative';
+		             storage: storage;
+		             add: item;
+		             yourself.
+	storage narrativeSave: narrative.
+	self assert: (storage narrative: narrative identity) equals: { item }
+]
+
+{ #category : 'tests' }
+HiDeStorageTest >> testNarrativeAt [
+
+	| narrative1 narrative2 |
+	narrative1 := HiDeNarrative new
+		              name: 'test narrative 1';
+		              identity: 'narrative-1.json';
+		              storage: storage;
+		              save;
+		              yourself.
+	narrative2 := HiDeNarrative new
+		              name: 'test narrative 2';
+		              identity: 'narrative-2.json';
+		              storage: storage;
+		              save;
+		              yourself.
+	storage loadNarratives.
+	self
+		assert: (storage narrativeAt: 'narrative-1.json') name
+		equals: 'test narrative 1'.
+	self
+		assert: (storage narrativeAt: 'narrative-2.json') name
+		equals: 'test narrative 2'
+]
+
+{ #category : 'tests' }
+HiDeStorageTest >> testNarrativeAtDo [
+
+	| item narrative |
+	item := HiDePersistencyObjectForTesting new
+		        hideStorage: storage;
+		        hideSave;
+		        yourself.
+	narrative := HiDeNarrative new
+		             name: 'test narrative';
+		             storage: storage;
+		             add: item;
+		             yourself.
+	storage narrativeSave: narrative.
+	self
+		assert: (Array streamContents: [ :stream |
+				 storage
+					 narrativeAt: narrative identity
+					 do: [ :i | stream nextPut: i ] ])
+		equals: { item }
+]
+
+{ #category : 'tests' }
+HiDeStorageTest >> testNarrativeNameAt [
+
+	| narrative1 narrative2 |
+	narrative1 := HiDeNarrative new
+		              name: 'test narrative 1';
+		              identity: 'narrative-1.json';
+		              storage: storage;
+		              save;
+		              yourself.
+	narrative2 := HiDeNarrative new
+		              name: 'test narrative 2';
+		              identity: 'narrative-2.json';
+		              storage: storage;
+		              save;
+		              yourself.
+	storage loadNarratives.
+	self
+		assert: (storage narrativeNameAt: 'narrative-1.json')
+		equals: 'test narrative 1'.
+	self
+		assert: (storage narrativeNameAt: 'narrative-2.json')
+		equals: 'test narrative 2'
 ]
 
 { #category : 'tests' }

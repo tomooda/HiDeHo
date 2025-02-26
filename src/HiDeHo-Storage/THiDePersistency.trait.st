@@ -22,6 +22,12 @@ THiDePersistency >> hideBaseDirectoryDo: aBlock [
 		  hideStorage chronicleFileReferenceFor: hideMetadata do: aBlock ]
 ]
 
+{ #category : 'hideho-testing' }
+THiDePersistency >> hideIsAutoExpirable [
+
+	^ false
+]
+
 { #category : 'hideho-operations' }
 THiDePersistency >> hideLoad [
 
@@ -50,6 +56,12 @@ THiDePersistency >> hideMetadata [
 THiDePersistency >> hideMetadata: aDictionary [
 
 	hideMetadata := aDictionary
+]
+
+{ #category : 'hideho-operations' }
+THiDePersistency >> hideRemove [
+
+	hideStorage ifNotNil: [ hideStorage chronicleRemove: self ]
 ]
 
 { #category : 'hideho-operations' }

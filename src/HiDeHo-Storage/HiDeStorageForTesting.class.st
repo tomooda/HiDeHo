@@ -1,6 +1,6 @@
 Class {
 	#name : 'HiDeStorageForTesting',
-	#superclass : 'HiDeStorage',
+	#superclass : 'HiDeStorageWithExpiration',
 	#category : 'HiDeHo-Storage-Tests',
 	#package : 'HiDeHo-Storage',
 	#tag : 'Tests'

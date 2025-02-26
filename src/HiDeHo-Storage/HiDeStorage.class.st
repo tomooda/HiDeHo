@@ -3,14 +3,26 @@ Class {
 	#superclass : 'Object',
 	#instVars : [
 		'basepath',
-		'chronicleMaxSize',
-		'chronicleMaxDays',
 		'chronicle'
 	],
 	#category : 'HiDeHo-Storage-Core',
 	#package : 'HiDeHo-Storage',
 	#tag : 'Core'
 }
+
+{ #category : 'testing' }
+HiDeStorage class >> isAbstract [
+
+	^ self = HiDeStorage
+]
+
+{ #category : 'instance creation' }
+HiDeStorage class >> on: aFileReference [
+
+	^ self new
+		  basepath: aFileReference;
+		  yourself
+]
 
 { #category : 'accessing-files' }
 HiDeStorage >> basepath: aFileReference [
@@ -22,9 +34,7 @@ HiDeStorage >> basepath: aFileReference [
 { #category : 'updating' }
 HiDeStorage >> basepathChanged [
 
-	self
-		loadSettings;
-		loadChronicle
+	self loadChronicle
 ]
 
 { #category : 'accessing-files' }
@@ -88,30 +98,6 @@ HiDeStorage >> chronicleLoad: aHiDePersistency [
 				  hideStorage: self;
 				  yourself ].
 	^ nil
-]
-
-{ #category : 'accessing' }
-HiDeStorage >> chronicleMaxDays [
-
-	^ chronicleMaxDays
-]
-
-{ #category : 'accessing' }
-HiDeStorage >> chronicleMaxDays: anInteger [
-
-	chronicleMaxDays := anInteger
-]
-
-{ #category : 'accessing' }
-HiDeStorage >> chronicleMaxSize [
-
-	^ chronicleMaxSize
-]
-
-{ #category : 'accessing' }
-HiDeStorage >> chronicleMaxSize: anInteger [
-
-	chronicleMaxSize := anInteger
 ]
 
 { #category : 'operations-chronicle' }
@@ -268,16 +254,6 @@ HiDeStorage >> loadChronicle [
 			ifAbsentPut: [ self createPayloadFor: metadata ] ]
 ]
 
-{ #category : 'operations-settings' }
-HiDeStorage >> loadSettings [
-
-	self settingsFileReferenceDo: [ :ref |
-		([ ref readStreamDo: [ :stream | STONJSON fromStream: stream ] ]
-			 on: Exception
-			 do: [ :ex | ex return: nil ]) ifNotNil: [ :json |
-			self settings: json ] ]
-]
-
 { #category : 'class access' }
 HiDeStorage >> metadataClass [
 
@@ -288,51 +264,6 @@ HiDeStorage >> metadataClass [
 HiDeStorage >> payloadClassFor: aHiDeMetadata [
 
 	^ self subclassResponsibility
-]
-
-{ #category : 'operations-settings' }
-HiDeStorage >> saveSettings [
-
-	self settingsFileReferenceDo: [ :ref |
-		ref
-			ensureDelete;
-			writeStreamDo: [ :stream |
-				STONJSON put: self settings onStreamPretty: stream ] ]
-]
-
-{ #category : 'accessing' }
-HiDeStorage >> settings [
-
-	| json |
-	json := OrderedDictionary new.
-	chronicleMaxDays ifNotNil: [
-		json at: 'chronicle-max-days' put: chronicleMaxDays ].
-	chronicleMaxSize ifNotNil: [
-		json at: 'chronicle-max-size' put: chronicleMaxSize ].
-	^ json
-]
-
-{ #category : 'accessing' }
-HiDeStorage >> settings: aDictionary [
-
-	aDictionary
-		at: 'chronicle-max-days'
-		ifPresent: [ :value | chronicleMaxDays := value ];
-		at: 'chronicle-max-size'
-		ifPresent: [ :value | chronicleMaxSize := value ]
-]
-
-{ #category : 'accessing-files' }
-HiDeStorage >> settingsFileReferenceDo: aBlock [
-
-	^ self basepathDo: [ :ref |
-		  aBlock cull: (ref / self settingsFilename) copy ]
-]
-
-{ #category : 'accessing-files' }
-HiDeStorage >> settingsFilename [
-
-	^ 'settings.json'
 ]
 
 { #category : 'accessing-files' }

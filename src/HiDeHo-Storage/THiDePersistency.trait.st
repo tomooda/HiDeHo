@@ -25,7 +25,7 @@ THiDePersistency >> hideBaseDirectoryDo: aBlock [
 { #category : 'hideho-testing' }
 THiDePersistency >> hideIsAutoExpirable [
 
-	^ false
+	^ true
 ]
 
 { #category : 'hideho-operations' }

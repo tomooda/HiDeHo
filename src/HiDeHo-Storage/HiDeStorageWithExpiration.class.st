@@ -115,10 +115,13 @@ HiDeStorageWithExpiration >> loadChronicle [
 HiDeStorageWithExpiration >> loadSettings [
 
 	self settingsFileReferenceDo: [ :ref |
-		([ ref readStreamDo: [ :stream | STONJSON fromStream: stream ] ]
-			 on: Exception
-			 do: [ :ex | ex return: nil ]) ifNotNil: [ :json |
-			self settings: json ] ]
+		ref isFile
+			ifTrue: [
+				([ ref readStreamDo: [ :stream | STONJSON fromStream: stream ] ]
+					 on: Exception
+					 do: [ :ex | ex return: nil ]) ifNotNil: [ :json |
+					self settings: json ] ]
+			ifFalse: [ ref exists ifFalse: [ self saveSettings ] ] ]
 ]
 
 { #category : 'operations-settings' }

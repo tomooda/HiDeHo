@@ -31,7 +31,7 @@ HiDeTagFilterPresenter >> initialize [
 	self
 		beResizable;
 		addColumn: ((checkboxColumn := HiDeButtonTableColumn
-				                    title: ''
+				                    title: (self iconNamed: #edit)
 				                    evaluated: [ :tag |
 					                    (requiredTags includes: tag)
 						                    ifTrue: [ self iconNamed: #smallAdd ]
@@ -39,6 +39,7 @@ HiDeTagFilterPresenter >> initialize [
 							                    (rejectTags includes: tag)
 								                    ifTrue: [ self iconNamed: #smallCancel ]
 								                    ifFalse: [ '' ] ] ])
+				 color: Color lightGray;
 				 action: [ :tag |
 					 (requiredTags includes: tag)
 						 ifTrue: [

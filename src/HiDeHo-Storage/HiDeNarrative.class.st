@@ -120,7 +120,9 @@ HiDeNarrative >> load: aFileReference [
 					at: 'identity' ifPresent: [ :str | identity := str ];
 					at: 'name' ifPresent: [ :str | name := str ];
 					at: 'items' ifPresent: [ :array |
-						items := array asSortedCollection:
+						items := (array select: [ :id |
+								          (storage chronicleAt: id) notNil ])
+							         asSortedCollection:
 								         [ :id |
 								         (storage chronicleAt: id) hideMetadata timestamp ]
 									         descending ] ] ] ]

@@ -1,2 +1,2 @@
 # HiDeHo
-the HiDeHo (HInts for Directing the Exploration from History of Operations) framework for Pharo
+the Hi-De-Ho (Hypothesis Initiation - Dynamic Exploration - History of Operations) framework for Pharo
